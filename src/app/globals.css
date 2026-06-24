@@ -1,0 +1,96 @@
+@import "tailwindcss";
+
+/*
+ * Safeguard design tokens.
+ * Restrained slate/blue palette for a compliance/healthcare feel.
+ * Semantic risk colors come from the locked `ratingColor()` helper in the lib.
+ */
+:root {
+  --background: #f8fafc; /* slate-50 */
+  --surface: #ffffff;
+  --foreground: #0f172a; /* slate-900 */
+  --muted: #475569; /* slate-600 */
+  --border: #e2e8f0; /* slate-200 */
+  --brand: #1d4ed8; /* blue-700 */
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #020617; /* slate-950 */
+    --surface: #0f172a; /* slate-900 */
+    --foreground: #e2e8f0; /* slate-200 */
+    --muted: #94a3b8; /* slate-400 */
+    --border: #1e293b; /* slate-800 */
+    --brand: #60a5fa; /* blue-400 */
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Consistent, visible focus ring across interactive elements. */
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/*
+ * Print stylesheet for the /report route.
+ * Anything tagged `.no-print` (nav, action buttons) is removed; the report
+ * body renders as clean black-on-white that fits a printed page.
+ */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  :root {
+    --background: #ffffff;
+    --surface: #ffffff;
+    --foreground: #000000;
+    --muted: #333333;
+    --border: #cccccc;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  .print-container {
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Avoid splitting cards/rows awkwardly across page breaks. */
+  .print-avoid-break {
+    break-inside: avoid;
+  }
+
+  table {
+    font-size: 11px;
+  }
+
+  a {
+    text-decoration: none !important;
+    color: #000000 !important;
+  }
+
+  @page {
+    margin: 1.5cm;
+  }
+}
