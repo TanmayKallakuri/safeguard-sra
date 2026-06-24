@@ -33,9 +33,7 @@ function EditableField({
   if (editing) {
     return (
       <label className="block">
-        <span className="block text-xs font-medium uppercase tracking-wide text-[var(--muted)]">
-          {label}
-        </span>
+        <span className="eyebrow block">{label}</span>
         <input
           autoFocus
           value={draft}
@@ -49,7 +47,7 @@ function EditableField({
             }
           }}
           placeholder={placeholder}
-          className="mt-0.5 w-full max-w-md rounded-md border border-blue-400 bg-[var(--surface)] px-2 py-1 text-lg font-semibold outline-none"
+          className="panel-inset mt-1.5 w-full max-w-md rounded-md border-[rgb(45_212_191_/_0.4)] px-2.5 py-1.5 text-lg font-semibold text-[var(--fg)] outline-none placeholder:text-[var(--fg-faint)]"
         />
       </label>
     );
@@ -57,25 +55,23 @@ function EditableField({
 
   return (
     <div>
-      <span className="block text-xs font-medium uppercase tracking-wide text-[var(--muted)]">
-        {label}
-      </span>
+      <span className="eyebrow block">{label}</span>
       <button
         type="button"
         onClick={startEditing}
-        className="group mt-0.5 inline-flex items-center gap-1.5 text-left"
+        className="group mt-1.5 inline-flex items-center gap-1.5 text-left"
         title={`Edit ${label.toLowerCase()}`}
       >
         <span
-          className={`text-lg font-semibold ${
-            value ? "" : "text-[var(--muted)] italic"
+          className={`text-lg font-semibold text-[var(--fg)] ${
+            value ? "" : "text-[var(--fg-faint)] italic"
           }`}
         >
           {value || placeholder}
         </span>
         <svg
           viewBox="0 0 24 24"
-          className="h-3.5 w-3.5 text-slate-400 opacity-0 transition-opacity group-hover:opacity-100"
+          className="h-3.5 w-3.5 text-[var(--fg-faint)] opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100"
           fill="none"
           aria-hidden="true"
         >

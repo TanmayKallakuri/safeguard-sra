@@ -54,7 +54,7 @@ export function ReportToolbar() {
       <button
         type="button"
         onClick={() => window.print()}
-        className="inline-flex items-center gap-1.5 rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
+        className="inline-flex items-center gap-1.5 rounded-md bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-[#04130d] shadow-[0_4px_20px_-6px_var(--accent-glow)] transition-colors hover:bg-[var(--accent-bright)] active:scale-[0.97]"
       >
         <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" aria-hidden="true">
           <path
@@ -70,13 +70,13 @@ export function ReportToolbar() {
       <button
         type="button"
         onClick={copyMarkdown}
-        className="inline-flex items-center gap-1.5 rounded-md border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-sm font-medium transition-colors hover:bg-slate-50 dark:hover:bg-slate-800"
+        className="inline-flex items-center gap-1.5 rounded-md border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-2 text-sm font-medium text-[var(--fg)] transition-colors hover:border-[var(--border-strong)] hover:bg-[#1b2430] active:scale-[0.97]"
       >
         {copied ? (
           <>
             <svg
               viewBox="0 0 24 24"
-              className="h-4 w-4 text-emerald-600"
+              className="h-4 w-4 text-[var(--low)]"
               fill="none"
               aria-hidden="true"
             >

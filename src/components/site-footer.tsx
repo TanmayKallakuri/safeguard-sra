@@ -1,9 +1,9 @@
 export function SiteFooter() {
   return (
-    <footer className="no-print border-t border-[var(--border)] bg-[var(--surface)]">
-      <div className="mx-auto max-w-6xl px-4 py-6 text-xs leading-relaxed text-[var(--muted)] sm:px-6">
+    <footer className="no-print mt-8 border-t border-[var(--border)] bg-[var(--bg-base)]">
+      <div className="mx-auto max-w-6xl px-4 py-6 text-xs leading-relaxed text-[var(--fg-muted)] sm:px-6">
         <p>
-          <span className="font-medium text-[var(--foreground)]">Safeguard</span>{" "}
+          <span className="font-mono font-medium text-[var(--fg)]">safeguard</span>{" "}
           is a portfolio demonstration. The sample data describes{" "}
           <span className="italic">Riverbend Family Clinic</span>, a fictional
           practice — it contains no real protected health information.

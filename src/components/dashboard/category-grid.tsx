@@ -1,16 +1,19 @@
 "use client";
 
 import Link from "next/link";
+import { m, useReducedMotion } from "motion/react";
 import { CATEGORIES } from "@/lib/catalog";
 import type { CategorySummary } from "@/lib/scoring";
 import { ComplianceBar, StatusBreakdownBar } from "@/components/ui/bars";
 import { RatingBadge } from "@/components/ui/badges";
+import { SPRING } from "@/components/ui/motion";
 
 function categoryMeta(id: CategorySummary["category"]) {
   return CATEGORIES.find((c) => c.id === id)!;
 }
 
 function CategoryCard({ summary }: { summary: CategorySummary }) {
+  const reduce = useReducedMotion();
   const meta = categoryMeta(summary.category);
   const openRisks =
     summary.riskCounts.critical +
@@ -19,36 +22,47 @@ function CategoryCard({ summary }: { summary: CategorySummary }) {
     summary.riskCounts.low;
 
   return (
-    <Link
-      href={`/assess?cat=${summary.category}`}
-      className="group flex flex-col gap-3 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 transition-shadow hover:border-blue-300 hover:shadow-md dark:hover:border-blue-700"
+    <m.div
+      whileHover={reduce ? undefined : { y: -2 }}
+      whileTap={reduce ? undefined : { scale: 0.99 }}
+      transition={SPRING}
+      className="h-full"
     >
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <h3 className="text-sm font-semibold leading-snug text-[var(--foreground)]">
-            {meta.name}
-          </h3>
-          <p className="mt-0.5 font-mono text-[11px] text-[var(--muted)]">
-            {meta.citation}
-          </p>
+      <Link
+        href={`/assess?cat=${summary.category}`}
+        className="panel group flex h-full flex-col gap-3 rounded-xl p-4 transition-colors hover:border-[var(--border-strong)] hover:bg-[var(--bg-elevated)]"
+      >
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <h3 className="text-sm font-semibold leading-snug text-[var(--fg)]">
+              {meta.name}
+            </h3>
+            <p className="mt-0.5 font-mono text-[11px] text-[var(--fg-faint)]">
+              {meta.citation}
+            </p>
+          </div>
+          <RatingBadge rating={summary.topRisk} />
         </div>
-        <RatingBadge rating={summary.topRisk} />
-      </div>
 
-      <ComplianceBar pct={summary.compliancePct} label="Compliance" />
+        <ComplianceBar pct={summary.compliancePct} label="Compliance" />
 
-      <div className="space-y-1.5">
-        <StatusBreakdownBar counts={summary.statusCounts} />
-        <div className="flex items-center justify-between text-[11px] text-[var(--muted)]">
-          <span>{summary.total} controls</span>
-          <span>
-            {openRisks === 0
-              ? "No open risks"
-              : `${openRisks} open risk${openRisks === 1 ? "" : "s"}`}
-          </span>
+        <div className="mt-auto space-y-1.5">
+          <StatusBreakdownBar counts={summary.statusCounts} />
+          <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-wider text-[var(--fg-faint)]">
+            <span>{summary.total} controls</span>
+            <span
+              className={
+                openRisks > 0 ? "text-[var(--fg-muted)]" : "text-[var(--fg-faint)]"
+              }
+            >
+              {openRisks === 0
+                ? "No open risks"
+                : `${openRisks} open risk${openRisks === 1 ? "" : "s"}`}
+            </span>
+          </div>
         </div>
-      </div>
-    </Link>
+      </Link>
+    </m.div>
   );
 }
 

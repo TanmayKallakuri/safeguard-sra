@@ -2,11 +2,13 @@
 
 import { Suspense, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { m, useReducedMotion } from "motion/react";
 import { CATEGORIES, CONTROLS } from "@/lib/catalog";
 import type { SafeguardCategory } from "@/lib/catalog";
 import { useAssessment } from "@/components/assessment-provider";
 import { ControlCard } from "@/components/assess/control-card";
 import { ComplianceBar } from "@/components/ui/bars";
+import { Rise, Stagger, SPRING } from "@/components/ui/motion";
 
 const CATEGORY_IDS = CATEGORIES.map((c) => c.id);
 
@@ -17,11 +19,11 @@ function isCategory(value: string | null): value is SafeguardCategory {
 function AssessSkeleton() {
   return (
     <div className="mx-auto max-w-4xl animate-pulse px-4 py-10 sm:px-6">
-      <div className="h-7 w-48 rounded bg-slate-200 dark:bg-slate-800" />
-      <div className="mt-4 h-10 rounded bg-slate-100 dark:bg-slate-900" />
+      <div className="h-7 w-48 rounded bg-white/5" />
+      <div className="mt-4 h-10 rounded bg-white/[0.03]" />
       <div className="mt-6 space-y-4">
         {[0, 1, 2].map((i) => (
-          <div key={i} className="h-56 rounded-xl bg-slate-100 dark:bg-slate-900" />
+          <div key={i} className="h-56 rounded-xl bg-white/[0.03]" />
         ))}
       </div>
     </div>
@@ -30,6 +32,7 @@ function AssessSkeleton() {
 
 function AssessInner() {
   const params = useSearchParams();
+  const reduce = useReducedMotion();
   const { doc, summary, setResponse, ready } = useAssessment();
 
   const initialCat = params.get("cat");
@@ -53,10 +56,13 @@ function AssessInner() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-10">
       <div className="flex flex-col gap-1">
-        <h1 className="text-2xl font-bold tracking-tight">Assessment</h1>
-        <p className="text-sm text-[var(--muted)]">
-          Set a status for each control. Anything partial or not implemented gets a
-          likelihood × impact rating and flows into the risk register.
+        <p className="eyebrow text-[var(--accent)]">Control review</p>
+        <h1 className="mt-1 text-2xl font-bold tracking-tight text-[var(--fg)]">
+          Assessment
+        </h1>
+        <p className="text-sm leading-relaxed text-[var(--fg-muted)]">
+          Set a status for each control. Anything partial or not implemented gets
+          a likelihood &times; impact rating and flows into the risk register.
         </p>
       </div>
 
@@ -64,7 +70,7 @@ function AssessInner() {
       <div
         role="tablist"
         aria-label="Safeguard categories"
-        className="mt-6 flex gap-1 overflow-x-auto border-b border-[var(--border)] pb-px"
+        className="mt-6 flex gap-1 overflow-x-auto border-b border-[var(--border)]"
       >
         {CATEGORIES.map((cat) => {
           const catSummary = summary.categories.find(
@@ -78,53 +84,71 @@ function AssessInner() {
               role="tab"
               aria-selected={isActive}
               onClick={() => setActive(cat.id)}
-              className={`relative whitespace-nowrap border-b-2 px-3 py-2 text-sm font-medium transition-colors ${
+              className={`relative whitespace-nowrap px-3 py-2.5 text-sm font-medium transition-colors ${
                 isActive
-                  ? "border-blue-600 text-blue-700 dark:border-blue-400 dark:text-blue-300"
-                  : "border-transparent text-[var(--muted)] hover:text-[var(--foreground)]"
+                  ? "text-[var(--fg)]"
+                  : "text-[var(--fg-muted)] hover:text-[var(--fg)]"
               }`}
             >
               {cat.name.replace(" Safeguards", "").replace(" Requirements", "")}
-              <span className="ml-1.5 text-[11px] tabular-nums text-[var(--muted)]">
+              <span className="ml-1.5 font-mono text-[11px] tabular-nums text-[var(--fg-faint)]">
                 {done}/{catSummary.total}
               </span>
+              {isActive ? (
+                <m.span
+                  layoutId="assess-tab"
+                  className="absolute inset-x-0 -bottom-px h-0.5 rounded-full bg-[var(--accent)]"
+                  transition={reduce ? { duration: 0 } : SPRING}
+                  aria-hidden="true"
+                />
+              ) : null}
             </button>
           );
         })}
       </div>
 
-      {/* Category header + progress */}
-      <div className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 sm:p-5">
+      {/* Category header + progress. Constant `initial` (hydration-safe);
+          reduced motion only flattens the transition. */}
+      <m.div
+        key={active}
+        initial={{ opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={reduce ? { duration: 0 } : { duration: 0.2 }}
+        className="panel mt-6 rounded-xl p-4 sm:p-5"
+      >
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           <div>
-            <h2 className="text-lg font-semibold">{activeMeta.name}</h2>
-            <p className="font-mono text-xs text-[var(--muted)]">
+            <h2 className="text-lg font-semibold text-[var(--fg)]">
+              {activeMeta.name}
+            </h2>
+            <p className="font-mono text-xs text-[var(--fg-faint)]">
               {activeMeta.citation}
             </p>
           </div>
-          <span className="text-xs text-[var(--muted)]">
+          <span className="font-mono text-[11px] uppercase tracking-wider text-[var(--fg-faint)]">
             {assessedInCat} of {activeSummary.total} reviewed
           </span>
         </div>
-        <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">
+        <p className="mt-2 text-sm leading-relaxed text-[var(--fg-muted)]">
           {activeMeta.description}
         </p>
-        <div className="mt-3">
+        <div className="mt-4">
           <ComplianceBar pct={activeSummary.compliancePct} label="Compliance" />
         </div>
-      </div>
+      </m.div>
 
-      {/* Controls */}
-      <div className="mt-4 space-y-4">
+      {/* Controls — re-stagger on category change. */}
+      <Stagger key={`controls-${active}`} className="mt-4 space-y-4">
         {controls.map((control) => (
-          <ControlCard
-            key={control.id}
-            control={control}
-            response={doc.responses[control.id]}
-            onChange={(next) => setResponse(control.id, next)}
-          />
+          <Rise as="div" key={control.id}>
+            <ControlCard
+              control={control}
+              response={doc.responses[control.id]}
+              onChange={(next) => setResponse(control.id, next)}
+            />
+          </Rise>
         ))}
-      </div>
+      </Stagger>
     </div>
   );
 }

@@ -1,17 +1,21 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { m, useReducedMotion } from "motion/react";
+import { useId, type ReactNode } from "react";
+import { SPRING } from "@/components/ui/motion";
 
 export interface SegmentedOption<T extends string> {
   value: T;
   label: ReactNode;
-  /** Optional per-option active styles (e.g. semantic risk colors). */
+  /** Optional per-option active fill (e.g. semantic status colors). */
   activeClass?: string;
 }
 
 /**
- * Accessible segmented control built on a radiogroup of buttons. Keyboard-usable
- * (tab to the group, arrow/enter via native button focus) and labelled.
+ * Accessible segmented control built on a radiogroup of buttons. The active
+ * background is a shared-element `layoutId` so it slides smoothly between
+ * options (transform-based FLIP) — the signature "flow" detail. Keyboard-usable
+ * and labelled. Reduced motion → the pill snaps without sliding.
  */
 export function Segmented<T extends string>({
   options,
@@ -26,18 +30,22 @@ export function Segmented<T extends string>({
   ariaLabel: string;
   size?: "sm" | "md";
 }) {
+  const reduce = useReducedMotion();
+  // Unique per-instance group so the active pill never slides across separate
+  // controls (e.g. Likelihood vs Impact) that happen to render together.
+  const groupId = useId();
   const pad = size === "sm" ? "px-2.5 py-1 text-xs" : "px-3 py-1.5 text-sm";
+
   return (
     <div
       role="radiogroup"
       aria-label={ariaLabel}
-      className="inline-flex flex-wrap gap-1 rounded-lg border border-[var(--border)] bg-slate-50 p-1 dark:bg-slate-900"
+      className="panel-inset inline-flex flex-wrap gap-0.5 rounded-lg p-1"
     >
       {options.map((opt) => {
         const active = opt.value === value;
-        const activeStyle =
-          opt.activeClass ??
-          "bg-blue-600 text-white shadow-sm dark:bg-blue-500";
+        const activeFill =
+          opt.activeClass ?? "bg-[var(--accent)] text-[#04130d]";
         return (
           <button
             key={opt.value}
@@ -45,13 +53,21 @@ export function Segmented<T extends string>({
             role="radio"
             aria-checked={active}
             onClick={() => onChange(opt.value)}
-            className={`rounded-md font-medium transition-colors ${pad} ${
+            className={`relative rounded-md font-medium transition-colors ${pad} ${
               active
-                ? activeStyle
-                : "text-slate-600 hover:bg-white hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
+                ? "text-current"
+                : "text-[var(--fg-muted)] hover:text-[var(--fg)]"
             }`}
           >
-            {opt.label}
+            {active ? (
+              <m.span
+                layoutId={`seg-${groupId}`}
+                className={`absolute inset-0 rounded-md shadow-[0_2px_8px_-2px_rgba(0,0,0,0.6)] ${activeFill}`}
+                transition={reduce ? { duration: 0 } : SPRING}
+                aria-hidden="true"
+              />
+            ) : null}
+            <span className="relative z-10">{opt.label}</span>
           </button>
         );
       })}

@@ -1,8 +1,9 @@
-import { ratingColor, statusLabel } from "@/lib/scoring";
 import type { ImplementationStatus, RiskRating } from "@/lib/scoring";
+import { statusLabel } from "@/lib/scoring";
 import type { SpecRequirement } from "@/lib/catalog";
+import { ratingStyle, statusStyle } from "@/components/ui/tokens";
 
-/** A colored pill for a derived risk rating, using the locked color tokens. */
+/** A colored pill for a derived risk rating, using the dark display tokens. */
 export function RatingBadge({
   rating,
   className = "",
@@ -10,26 +11,31 @@ export function RatingBadge({
   rating: RiskRating;
   className?: string;
 }) {
-  const c = ratingColor(rating);
+  const c = ratingStyle(rating);
   return (
     <span
-      className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold ${c.bg} ${c.text} ${c.border} ${className}`}
+      className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border px-2.5 py-0.5 font-mono text-[11px] font-semibold uppercase tracking-wider ${c.bg} ${c.text} ${c.border} ${className}`}
     >
+      <span
+        className="h-1.5 w-1.5 rounded-full"
+        style={{ backgroundColor: c.fill }}
+        aria-hidden="true"
+      />
       {c.label}
     </span>
   );
 }
 
 /**
- * Required vs Addressable. The distinction is real in HIPAA, so make it visually
- * distinct: Required is a solid emphasis, Addressable is an outline.
+ * Required vs Addressable. The distinction is real in HIPAA, so make it
+ * visually distinct: Required is a solid teal emphasis, Addressable an outline.
  */
 export function RequirementBadge({ requirement }: { requirement: SpecRequirement }) {
   if (requirement === "required") {
     return (
       <span
         title="Required — must be implemented"
-        className="inline-flex items-center gap-1 rounded-md bg-blue-600 px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-white dark:bg-blue-500"
+        className="inline-flex items-center rounded border border-[rgb(45_212_191_/_0.4)] bg-[var(--accent-dim)] px-1.5 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wider text-[var(--accent-bright)]"
       >
         Required
       </span>
@@ -38,32 +44,24 @@ export function RequirementBadge({ requirement }: { requirement: SpecRequirement
   return (
     <span
       title="Addressable — implement, adopt an equivalent, or document why not"
-      className="inline-flex items-center gap-1 rounded-md border border-blue-400 bg-transparent px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-blue-700 dark:border-blue-400/60 dark:text-blue-300"
+      className="inline-flex items-center rounded border border-[var(--border-strong)] bg-transparent px-1.5 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wider text-[var(--fg-muted)]"
     >
       Addressable
     </span>
   );
 }
 
-const STATUS_STYLES: Record<ImplementationStatus, string> = {
-  implemented:
-    "bg-emerald-100 text-emerald-800 border-emerald-300 dark:bg-emerald-950 dark:text-emerald-300 dark:border-emerald-800",
-  partial:
-    "bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-950 dark:text-amber-300 dark:border-amber-800",
-  "not-implemented":
-    "bg-red-100 text-red-800 border-red-300 dark:bg-red-950 dark:text-red-300 dark:border-red-800",
-  "not-applicable":
-    "bg-slate-100 text-slate-600 border-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700",
-  unassessed:
-    "bg-slate-50 text-slate-500 border-slate-200 dark:bg-slate-900 dark:text-slate-400 dark:border-slate-700",
-};
-
 /** A small pill describing an implementation status. */
 export function StatusBadge({ status }: { status: ImplementationStatus }) {
+  const s = statusStyle(status);
   return (
     <span
-      className={`inline-flex items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-medium ${STATUS_STYLES[status]}`}
+      className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-medium ${s.bg} ${s.text} ${s.border}`}
     >
+      <span
+        className={`h-1.5 w-1.5 rounded-full ${s.dot}`}
+        aria-hidden="true"
+      />
       {statusLabel(status)}
     </span>
   );
