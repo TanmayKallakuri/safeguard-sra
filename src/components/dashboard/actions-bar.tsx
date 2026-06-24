@@ -50,12 +50,12 @@ export function ActionsBar() {
   }
 
   const btnBase =
-    "inline-flex items-center justify-center gap-1.5 rounded-md border px-3 py-1.5 text-sm font-medium transition-colors active:scale-[0.97]";
-  const btnNeutral = `${btnBase} border-[var(--border)] bg-[var(--bg-elevated)] text-[var(--fg)] hover:border-[var(--border-strong)] hover:bg-[#1b2430]`;
+    "inline-flex items-center justify-center gap-1.5 border px-2.5 py-1 text-[11px] font-medium uppercase tracking-[0.06em] transition-colors active:translate-y-px";
+  const btnNeutral = `${btnBase} border-[var(--rule)] bg-[var(--bg-inset)] text-[var(--fg-muted)] hover:border-[var(--rule-strong)] hover:bg-[var(--bg-elevated)] hover:text-[var(--fg)]`;
 
   return (
     <div className="space-y-2">
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-wrap items-center gap-1.5">
         <button type="button" onClick={loadSample} className={btnNeutral}>
           Load sample
         </button>
@@ -83,8 +83,10 @@ export function ActionsBar() {
         />
 
         {confirmReset ? (
-          <span className="inline-flex items-center gap-2 rounded-md border border-[rgb(248_113_113_/_0.3)] bg-[rgb(248_113_113_/_0.08)] px-2.5 py-1.5 text-sm">
-            <span className="text-[#fca5a5]">Clear everything?</span>
+          <span className="inline-flex items-center gap-2 border border-[rgb(245_84_79_/_0.32)] bg-[rgb(245_84_79_/_0.08)] px-2.5 py-1 text-[11px]">
+            <span className="uppercase tracking-[0.06em] text-[#f87b77]">
+              Clear everything?
+            </span>
             <button
               type="button"
               onClick={() => {
@@ -92,14 +94,14 @@ export function ActionsBar() {
                 setConfirmReset(false);
                 setNotice({ kind: "ok", text: "Assessment cleared." });
               }}
-              className="rounded bg-[var(--critical)] px-2 py-0.5 text-xs font-semibold text-[#1a0606] hover:brightness-110 active:scale-95"
+              className="bg-[var(--critical)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.06em] text-[#160404] hover:brightness-110 active:translate-y-px"
             >
-              Yes, start over
+              Confirm
             </button>
             <button
               type="button"
               onClick={() => setConfirmReset(false)}
-              className="rounded px-2 py-0.5 text-xs font-medium text-[var(--fg-muted)] hover:bg-white/5 hover:text-[var(--fg)]"
+              className="px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.06em] text-[var(--fg-muted)] hover:text-[var(--fg)]"
             >
               Cancel
             </button>
@@ -108,7 +110,7 @@ export function ActionsBar() {
           <button
             type="button"
             onClick={() => setConfirmReset(true)}
-            className={`${btnBase} border-transparent text-[#fca5a5] hover:bg-[rgb(248_113_113_/_0.08)]`}
+            className={`${btnBase} border-transparent text-[#f87b77] hover:bg-[rgb(245_84_79_/_0.08)]`}
           >
             Start over
           </button>
@@ -118,8 +120,8 @@ export function ActionsBar() {
       {notice ? (
         <p
           role="status"
-          className={`text-sm ${
-            notice.kind === "ok" ? "text-[#6ee7b7]" : "text-[#fca5a5]"
+          className={`text-[11px] ${
+            notice.kind === "ok" ? "text-[#6dd1a3]" : "text-[#f87b77]"
           }`}
         >
           {notice.text}

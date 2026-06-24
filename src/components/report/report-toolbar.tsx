@@ -54,23 +54,15 @@ export function ReportToolbar() {
       <button
         type="button"
         onClick={() => window.print()}
-        className="inline-flex items-center gap-1.5 rounded-md bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-[#04130d] shadow-[0_4px_20px_-6px_var(--accent-glow)] transition-colors hover:bg-[var(--accent-bright)] active:scale-[0.97]"
+        className="inline-flex items-center gap-2 border border-[var(--accent)] bg-[var(--accent)] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#04130d] transition-colors hover:brightness-110 active:translate-y-px"
       >
-        <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" aria-hidden="true">
-          <path
-            d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2M6 14h12v7H6v-7Z"
-            stroke="currentColor"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-        Print / Save as PDF
+        <span>⎙</span>
+        Print / PDF
       </button>
       <button
         type="button"
         onClick={copyMarkdown}
-        className="inline-flex items-center gap-1.5 rounded-md border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-2 text-sm font-medium text-[var(--fg)] transition-colors hover:border-[var(--border-strong)] hover:bg-[#1b2430] active:scale-[0.97]"
+        className="inline-flex items-center gap-2 border border-[var(--rule)] bg-[var(--bg-inset)] px-3 py-1.5 text-[11px] font-medium uppercase tracking-[0.08em] text-[var(--fg-muted)] transition-colors hover:border-[var(--rule-strong)] hover:bg-[var(--bg-elevated)] hover:text-[var(--fg)] active:translate-y-px"
       >
         {copied ? (
           <>

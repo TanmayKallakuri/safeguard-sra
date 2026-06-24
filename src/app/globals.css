@@ -1,70 +1,67 @@
 @import "tailwindcss";
 
 /*
- * Safeguard — "Compliance Command Console"
- * A dark-only, security-ops technical interface. Layered ink backgrounds,
- * hairline borders, one teal accent, IBM Plex mono/sans pairing.
+ * safeguard — "Threat console"
  *
- * This is a deliberate single dark theme (no prefers-color-scheme switch).
- * The only light context is print (see @media print), where the report must
- * render as clean black-on-white.
+ * A dense, monospace-forward security operations console (SOC/SIEM/TUI feel):
+ * hairline-ruled panels, near-monochrome cool ink, tabular numerals, the only
+ * saturated color is the risk signal. Dark-only by design; the single light
+ * context is print (the /report path must stay clean black-on-white).
  */
 :root {
   color-scheme: dark;
 
-  /* Layered backgrounds for real depth */
-  --bg-base: #0a0e14; /* app base — near-black ink */
-  --bg-panel: #11161f; /* panel surface */
-  --bg-elevated: #161d28; /* elevated / hover */
-  --bg-inset: #0d121a; /* recessed wells (inputs, tracks) */
+  /* Near-monochrome cool ink base — layered, separated by rules not shadows. */
+  --bg-base: #080a0c; /* app base */
+  --bg-panel: #0e1216; /* panel surface */
+  --bg-elevated: #141a20; /* hover / elevated row */
+  --bg-inset: #060809; /* recessed wells (inputs, bar tracks, cells) */
 
-  /* Hairline borders — crisp 1px lines are core to the look */
-  --border: rgba(255, 255, 255, 0.07);
-  --border-strong: rgba(255, 255, 255, 0.12);
-  --hairline-top: rgba(255, 255, 255, 0.06); /* 1px inner top highlight */
+  /* Hairline rules — 1px low-contrast lines are the structural language. */
+  --rule: rgba(148, 163, 184, 0.12); /* default divider */
+  --rule-strong: rgba(148, 163, 184, 0.22); /* hover / active edge */
+  --rule-faint: rgba(148, 163, 184, 0.07); /* internal grid lines */
 
-  /* Text */
-  --fg: #e6edf3; /* primary */
-  --fg-muted: #9aa7b4; /* secondary */
-  --fg-faint: #5c6b7a; /* faint / disabled */
+  /* Cool grey text, three tiers. */
+  --fg: #d4dde6; /* primary */
+  --fg-muted: #8b97a4; /* secondary / labels */
+  --fg-faint: #55626f; /* faint / axis / chrome */
 
-  /* The one confident accent — cyber teal */
-  --accent: #2dd4bf;
-  --accent-bright: #5eead4;
-  --accent-dim: rgba(45, 212, 191, 0.14);
-  --accent-glow: rgba(45, 212, 191, 0.18);
+  /* The one restrained interactive accent — sharp signal cyan. */
+  --accent: #22d3ee;
+  --accent-dim: rgba(34, 211, 238, 0.12);
 
-  /* Risk semantics, tuned for dark surfaces */
-  --critical: #f87171;
-  --high: #fb923c;
-  --medium: #fbbf24;
-  --low: #34d399;
+  /* Risk signal — the ONLY saturated color, reserved for ratings. */
+  --critical: #f5544f;
+  --high: #f5934a;
+  --medium: #e8c14a;
+  --low: #46c285;
 
-  /* Back-compat aliases for any var(--background)/var(--surface) still in tree */
+  /* Back-compat aliases (older class strings may still reference these). */
   --background: var(--bg-base);
   --surface: var(--bg-panel);
   --foreground: var(--fg);
   --muted: var(--fg-muted);
+  --border: var(--rule);
   --brand: var(--accent);
-
-  --shadow-panel: 0 1px 0 0 var(--hairline-top) inset, 0 8px 24px -12px rgba(0, 0, 0, 0.7);
-  --shadow-lift: 0 1px 0 0 var(--border-strong) inset, 0 16px 40px -16px rgba(0, 0, 0, 0.8);
 }
 
 @theme inline {
   --color-background: var(--bg-base);
   --color-surface: var(--bg-panel);
   --color-elevated: var(--bg-elevated);
+  --color-inset: var(--bg-inset);
   --color-foreground: var(--fg);
   --color-muted: var(--fg-muted);
   --color-faint: var(--fg-faint);
   --color-accent: var(--accent);
+  --color-rule: var(--rule);
   --color-critical: var(--critical);
   --color-high: var(--high);
   --color-medium: var(--medium);
   --color-low: var(--low);
-  --font-sans: var(--font-plex-sans);
-  --font-mono: var(--font-plex-mono);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
 }
 
 html {
@@ -75,117 +72,150 @@ body {
   position: relative;
   background: var(--bg-base);
   color: var(--fg);
-  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
-  font-feature-settings: "cv05", "ss01";
+  /* Mono is the dominant voice; prose opts into --font-sans explicitly. */
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 13px;
+  line-height: 1.45;
+  font-variant-numeric: tabular-nums;
   -webkit-font-smoothing: antialiased;
 }
 
-/*
- * Atmosphere — two fixed, non-interactive overlays sitting behind content.
- * 1. A faint dot-grid that gives the surface technical texture.
- * 2. A soft radial accent wash anchored top-center for depth on the hero.
- * Kept very low opacity so it reads as "tactile", never busy.
- */
-body::before {
-  content: "";
+/* All numerals align in columns, everywhere. */
+body,
+table,
+input,
+button {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Faint scanline + dot texture — very low opacity, fixed, non-interactive. */
+.scanlines {
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
   background-image:
-    radial-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px);
-  background-size: 22px 22px;
-  background-position: -1px -1px;
-  mask-image: radial-gradient(ellipse 120% 80% at 50% 0%, #000 30%, transparent 80%);
+    repeating-linear-gradient(
+      0deg,
+      rgba(148, 163, 184, 0.025) 0px,
+      rgba(148, 163, 184, 0.025) 1px,
+      transparent 1px,
+      transparent 3px
+    ),
+    radial-gradient(rgba(148, 163, 184, 0.04) 1px, transparent 1px);
+  background-size: 100% 3px, 26px 26px;
+  opacity: 0.6;
+  mix-blend-mode: screen;
 }
 
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(60% 40% at 50% -8%, var(--accent-glow), transparent 60%);
-  opacity: 0.5;
-}
-
-/* Keep app content above the atmosphere layers. */
-body > * {
+/* Keep app content above the texture. */
+body > *:not(.scanlines) {
   position: relative;
   z-index: 1;
 }
 
-/* Tactile grain — an extremely low-opacity SVG noise tile. */
-.grain {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  opacity: 0.025;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  mix-blend-mode: overlay;
-}
+/* ----- Console primitives ----------------------------------------------- */
 
-/* Console panel: elevated surface + hairline + soft shadow + top inner highlight. */
+/* A hairline-ruled panel. Sharp corners, 1px rule, surface — no shadow/glow. */
 .panel {
   background: var(--bg-panel);
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-panel);
+  border: 1px solid var(--rule);
 }
 
-.panel-inset {
+.inset {
   background: var(--bg-inset);
-  border: 1px solid var(--border);
+  border: 1px solid var(--rule);
 }
 
-/* Frosted console header. */
+/* Frosted top status bar. */
 .frost {
-  background: color-mix(in oklab, var(--bg-base) 72%, transparent);
-  backdrop-filter: blur(12px) saturate(140%);
-  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  background: color-mix(in oklab, var(--bg-base) 80%, transparent);
+  backdrop-filter: blur(8px) saturate(130%);
+  -webkit-backdrop-filter: blur(8px) saturate(130%);
 }
 
-/* Mono eyebrow / section label. */
-.eyebrow {
+/* Dense mono label: tiny, uppercase, letter-spaced. */
+.label {
   font-family: var(--font-mono), ui-monospace, monospace;
   text-transform: uppercase;
-  letter-spacing: 0.16em;
-  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  font-size: 10px;
+  font-weight: 500;
   color: var(--fg-faint);
 }
 
-/* Accent focus ring everywhere — keyboard accessible. */
-:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-  border-radius: 4px;
+/* Terminal section header: ▸ LABEL ──────────── connecting rule. */
+.section-head {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--fg-muted);
+}
+.section-head::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--rule);
 }
 
-/* Selection in brand teal. */
+/* Prose opt-in (control descriptions, remediation, notes). */
+.prose {
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  font-variant-numeric: normal;
+}
+
+/* Blinking cursor block on the wordmark. */
+.cursor {
+  display: inline-block;
+  width: 0.55em;
+  height: 1.05em;
+  margin-left: 1px;
+  vertical-align: text-bottom;
+  background: var(--accent);
+  animation: blink 1.1s steps(1) infinite;
+}
+@keyframes blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  50.01%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Sharp accent focus ring — keyboard accessible. */
+:focus-visible {
+  outline: 1.5px solid var(--accent);
+  outline-offset: 1px;
+  border-radius: 0;
+}
+
 ::selection {
   background: var(--accent-dim);
   color: var(--fg);
 }
 
-/* Custom scrollbar so overflow areas match the console feel. */
+/* Thin terminal scrollbars. */
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--border-strong) transparent;
+  scrollbar-color: var(--rule-strong) transparent;
 }
 *::-webkit-scrollbar {
-  height: 8px;
-  width: 8px;
+  height: 7px;
+  width: 7px;
 }
 *::-webkit-scrollbar-thumb {
-  background: var(--border-strong);
-  border-radius: 999px;
+  background: var(--rule-strong);
 }
 
-/*
- * Reduced motion: kill all non-essential animation/transition globally as a
- * safety net (motion components also branch on useReducedMotion()).
- */
+/* Reduced motion safety net (motion components also branch in JS). */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -195,12 +225,13 @@ body > * {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+  .cursor {
+    animation: none !important;
+    opacity: 1 !important;
+  }
 }
 
-/*
- * Print stylesheet for the /report route. The dark theme must NOT bleed onto
- * paper: force white background, black text, hide nav/atmosphere/animation.
- */
+/* ----- Print: force clean black-on-white, hide chrome + texture ---------- */
 @media print {
   :root {
     color-scheme: light;
@@ -208,8 +239,9 @@ body > * {
     --bg-panel: #ffffff;
     --bg-elevated: #ffffff;
     --bg-inset: #ffffff;
-    --border: #cccccc;
-    --border-strong: #999999;
+    --rule: #cccccc;
+    --rule-strong: #999999;
+    --rule-faint: #dddddd;
     --fg: #000000;
     --fg-muted: #333333;
     --fg-faint: #555555;
@@ -217,16 +249,15 @@ body > * {
     --surface: #ffffff;
     --foreground: #000000;
     --muted: #333333;
+    --border: #cccccc;
   }
 
   .no-print {
     display: none !important;
   }
 
-  /* Strip atmosphere + tactile layers; flatten panels. */
-  body::before,
-  body::after,
-  .grain {
+  .scanlines,
+  .cursor {
     display: none !important;
   }
 
@@ -234,11 +265,11 @@ body > * {
   body {
     background: #ffffff !important;
     color: #000000 !important;
+    font-size: 12px;
   }
 
   .panel,
-  .panel-inset {
-    box-shadow: none !important;
+  .inset {
     background: #ffffff !important;
     border-color: #cccccc !important;
   }

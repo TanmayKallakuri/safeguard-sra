@@ -2,7 +2,7 @@
 
 import { m, useReducedMotion } from "motion/react";
 import { useId, type ReactNode } from "react";
-import { SPRING } from "@/components/ui/motion";
+import { SLIDE } from "@/components/ui/motion";
 
 export interface SegmentedOption<T extends string> {
   value: T;
@@ -12,10 +12,9 @@ export interface SegmentedOption<T extends string> {
 }
 
 /**
- * Accessible segmented control built on a radiogroup of buttons. The active
- * background is a shared-element `layoutId` so it slides smoothly between
- * options (transform-based FLIP) — the signature "flow" detail. Keyboard-usable
- * and labelled. Reduced motion → the pill snaps without sliding.
+ * Accessible segmented control (radiogroup of buttons). The active fill is a
+ * shared-element `layoutId` that slides crisply between options. Sharp corners,
+ * hairline track — terminal, not pill. Reduced motion snaps without sliding.
  */
 export function Segmented<T extends string>({
   options,
@@ -31,16 +30,19 @@ export function Segmented<T extends string>({
   size?: "sm" | "md";
 }) {
   const reduce = useReducedMotion();
-  // Unique per-instance group so the active pill never slides across separate
-  // controls (e.g. Likelihood vs Impact) that happen to render together.
+  // Unique per-instance group so the active fill never slides across separate
+  // controls (e.g. Likelihood vs Impact) rendered together.
   const groupId = useId();
-  const pad = size === "sm" ? "px-2.5 py-1 text-xs" : "px-3 py-1.5 text-sm";
+  const pad =
+    size === "sm"
+      ? "px-2 py-1 text-[11px]"
+      : "px-2.5 py-1 text-xs";
 
   return (
     <div
       role="radiogroup"
       aria-label={ariaLabel}
-      className="panel-inset inline-flex flex-wrap gap-0.5 rounded-lg p-1"
+      className="inset inline-flex flex-wrap gap-px p-px"
     >
       {options.map((opt) => {
         const active = opt.value === value;
@@ -53,17 +55,17 @@ export function Segmented<T extends string>({
             role="radio"
             aria-checked={active}
             onClick={() => onChange(opt.value)}
-            className={`relative rounded-md font-medium transition-colors ${pad} ${
+            className={`relative font-medium uppercase tracking-[0.06em] transition-colors ${pad} ${
               active
                 ? "text-current"
-                : "text-[var(--fg-muted)] hover:text-[var(--fg)]"
+                : "text-[var(--fg-muted)] hover:bg-white/[0.03] hover:text-[var(--fg)]"
             }`}
           >
             {active ? (
               <m.span
                 layoutId={`seg-${groupId}`}
-                className={`absolute inset-0 rounded-md shadow-[0_2px_8px_-2px_rgba(0,0,0,0.6)] ${activeFill}`}
-                transition={reduce ? { duration: 0 } : SPRING}
+                className={`absolute inset-0 ${activeFill}`}
+                transition={reduce ? { duration: 0 } : SLIDE}
                 aria-hidden="true"
               />
             ) : null}

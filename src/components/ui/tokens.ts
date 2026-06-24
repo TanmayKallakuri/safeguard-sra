@@ -5,72 +5,73 @@ import type {
 } from "@/lib/scoring";
 
 /**
- * Dark-theme display tokens for risk ratings and implementation statuses.
+ * Threat-console display tokens for risk ratings and implementation statuses.
  *
- * The locked lib helper `ratingColor()` in `src/lib/scoring/risk.ts` returns
- * light-mode Tailwind classes (bg-red-100 etc.) that don't fit this dark
- * "command console" theme. Rather than touch the locked file, the UI maps
- * ratings/statuses to its own dark tokens here. Same rating keys, dark styling.
+ * The locked lib helper `ratingColor()` (in `src/lib/scoring/risk.ts`) returns
+ * light-mode Tailwind classes that don't fit this dark console theme. Rather
+ * than touch the locked file, the UI maps ratings/statuses to its own dark
+ * tokens here. Same rating keys, terminal styling — the risk signal is the only
+ * saturated color in the whole interface.
  */
 
 export interface RatingStyle {
-  /** Tinted background. */
+  /** Tinted background for badges/cells. */
   bg: string;
   /** Bright readable text. */
   text: string;
-  /** Border at ~/30 opacity. */
+  /** Border at low opacity. */
   border: string;
-  /** Solid fill color (for bars / dots), as a CSS var or literal. */
+  /** Solid fill (CSS color/var) for bars, cells, dots. */
   fill: string;
-  /** Tailwind utility for the solid bar fill. */
+  /** Tailwind utility for a solid bar/dot fill. */
   bar: string;
   label: string;
 }
 
 const RATING_STYLES: Record<RiskRating, RatingStyle> = {
   critical: {
-    bg: "bg-[rgb(248_113_113_/_0.13)]",
-    text: "text-[#fca5a5]",
-    border: "border-[rgb(248_113_113_/_0.32)]",
+    bg: "bg-[rgb(245_84_79_/_0.14)]",
+    text: "text-[#f87b77]",
+    border: "border-[rgb(245_84_79_/_0.4)]",
     fill: "var(--critical)",
     bar: "bg-[var(--critical)]",
-    label: "Critical",
+    label: "CRIT",
   },
   high: {
-    bg: "bg-[rgb(251_146_60_/_0.13)]",
-    text: "text-[#fdba74]",
-    border: "border-[rgb(251_146_60_/_0.32)]",
+    bg: "bg-[rgb(245_147_74_/_0.14)]",
+    text: "text-[#f7ab73]",
+    border: "border-[rgb(245_147_74_/_0.4)]",
     fill: "var(--high)",
     bar: "bg-[var(--high)]",
-    label: "High",
+    label: "HIGH",
   },
   medium: {
-    bg: "bg-[rgb(251_191_36_/_0.13)]",
-    text: "text-[#fcd34d]",
-    border: "border-[rgb(251_191_36_/_0.30)]",
+    bg: "bg-[rgb(232_193_74_/_0.13)]",
+    text: "text-[#edcf73]",
+    border: "border-[rgb(232_193_74_/_0.38)]",
     fill: "var(--medium)",
     bar: "bg-[var(--medium)]",
-    label: "Medium",
+    label: "MED",
   },
   low: {
-    bg: "bg-[rgb(52_211_153_/_0.13)]",
-    text: "text-[#6ee7b7]",
-    border: "border-[rgb(52_211_153_/_0.30)]",
+    bg: "bg-[rgb(70_194_133_/_0.13)]",
+    text: "text-[#6dd1a3]",
+    border: "border-[rgb(70_194_133_/_0.36)]",
     fill: "var(--low)",
     bar: "bg-[var(--low)]",
-    label: "Low",
+    label: "LOW",
   },
   none: {
-    bg: "bg-white/[0.04]",
+    bg: "bg-transparent",
     text: "text-[var(--fg-faint)]",
-    border: "border-[var(--border)]",
+    border: "border-[var(--rule)]",
     fill: "var(--fg-faint)",
-    bar: "bg-white/10",
-    label: "None",
+    bar: "bg-[var(--rule-strong)]",
+    label: "—",
   },
 };
 
-/** Dark display tokens for a derived risk rating. */
+/** Threat-console display tokens for a derived risk rating. */
 export function ratingStyle(rating: RiskRating): RatingStyle {
   return RATING_STYLES[rating];
 }
@@ -85,51 +86,64 @@ export interface StatusStyle {
   dot: string;
 }
 
-const STATUS_STYLES: Record<ImplementationStatus, StatusStyle> = {
+const STATUS_FILL: Record<ImplementationStatus, string> = {
+  implemented: "var(--low)",
+  partial: "var(--medium)",
+  "not-implemented": "var(--critical)",
+  "not-applicable": "var(--fg-faint)",
+  unassessed: "var(--rule-strong)",
+};
+
+const STATUS_FULL: Record<ImplementationStatus, StatusStyle> = {
   implemented: {
-    bg: "bg-[rgb(52_211_153_/_0.10)]",
-    text: "text-[#6ee7b7]",
-    border: "border-[rgb(52_211_153_/_0.28)]",
-    active: "bg-[var(--low)] text-[#04130d]",
+    bg: "bg-[rgb(70_194_133_/_0.1)]",
+    text: "text-[#6dd1a3]",
+    border: "border-[rgb(70_194_133_/_0.34)]",
+    active: "bg-[var(--low)] text-[#04120b]",
     bar: "bg-[var(--low)]",
     dot: "bg-[var(--low)]",
   },
   partial: {
-    bg: "bg-[rgb(251_191_36_/_0.10)]",
-    text: "text-[#fcd34d]",
-    border: "border-[rgb(251_191_36_/_0.28)]",
-    active: "bg-[var(--medium)] text-[#1a1300]",
+    bg: "bg-[rgb(232_193_74_/_0.1)]",
+    text: "text-[#edcf73]",
+    border: "border-[rgb(232_193_74_/_0.34)]",
+    active: "bg-[var(--medium)] text-[#161100]",
     bar: "bg-[var(--medium)]",
     dot: "bg-[var(--medium)]",
   },
   "not-implemented": {
-    bg: "bg-[rgb(248_113_113_/_0.10)]",
-    text: "text-[#fca5a5]",
-    border: "border-[rgb(248_113_113_/_0.28)]",
-    active: "bg-[var(--critical)] text-[#1a0606]",
+    bg: "bg-[rgb(245_84_79_/_0.1)]",
+    text: "text-[#f87b77]",
+    border: "border-[rgb(245_84_79_/_0.34)]",
+    active: "bg-[var(--critical)] text-[#160404]",
     bar: "bg-[var(--critical)]",
     dot: "bg-[var(--critical)]",
   },
   "not-applicable": {
-    bg: "bg-white/[0.05]",
+    bg: "bg-white/[0.04]",
     text: "text-[var(--fg-muted)]",
-    border: "border-[var(--border)]",
-    active: "bg-[#3a4757] text-[var(--fg)]",
-    bar: "bg-[#3a4757]",
-    dot: "bg-[#3a4757]",
+    border: "border-[var(--rule)]",
+    active: "bg-[#3a4654] text-[var(--fg)]",
+    bar: "bg-[#3a4654]",
+    dot: "bg-[#3a4654]",
   },
   unassessed: {
-    bg: "bg-white/[0.03]",
+    bg: "bg-white/[0.02]",
     text: "text-[var(--fg-faint)]",
-    border: "border-[var(--border)]",
+    border: "border-[var(--rule)]",
     active: "bg-white/15 text-[var(--fg)]",
-    bar: "bg-white/12",
-    dot: "bg-white/15",
+    bar: "bg-[var(--rule-strong)]",
+    dot: "bg-[var(--rule-strong)]",
   },
 };
 
 export function statusStyle(status: ImplementationStatus): StatusStyle {
-  return STATUS_STYLES[status];
+  return STATUS_FULL[status];
+}
+
+/** Raw fill color (CSS var) for a status — used by stacked density bars. */
+export function statusFill(status: ImplementationStatus): string {
+  return STATUS_FILL[status];
 }
 
 /** Title-case a low/medium/high level. */

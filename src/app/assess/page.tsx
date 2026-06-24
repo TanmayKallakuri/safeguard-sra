@@ -8,7 +8,7 @@ import type { SafeguardCategory } from "@/lib/catalog";
 import { useAssessment } from "@/components/assessment-provider";
 import { ControlCard } from "@/components/assess/control-card";
 import { ComplianceBar } from "@/components/ui/bars";
-import { Rise, Stagger, SPRING } from "@/components/ui/motion";
+import { Rise, Stagger, SLIDE } from "@/components/ui/motion";
 
 const CATEGORY_IDS = CATEGORIES.map((c) => c.id);
 
@@ -16,14 +16,22 @@ function isCategory(value: string | null): value is SafeguardCategory {
   return value !== null && (CATEGORY_IDS as string[]).includes(value);
 }
 
+function shortTab(name: string): string {
+  return name
+    .replace(/ Safeguards$/, "")
+    .replace(/ Requirements$/, "")
+    .replace(/, .*/, "")
+    .toUpperCase();
+}
+
 function AssessSkeleton() {
   return (
-    <div className="mx-auto max-w-4xl animate-pulse px-4 py-10 sm:px-6">
-      <div className="h-7 w-48 rounded bg-white/5" />
-      <div className="mt-4 h-10 rounded bg-white/[0.03]" />
-      <div className="mt-6 space-y-4">
+    <div className="mx-auto max-w-4xl animate-pulse px-3 py-6 sm:px-5">
+      <div className="h-5 w-40 bg-white/5" />
+      <div className="mt-4 h-9 bg-white/[0.03]" />
+      <div className="mt-4 space-y-3">
         {[0, 1, 2].map((i) => (
-          <div key={i} className="h-56 rounded-xl bg-white/[0.03]" />
+          <div key={i} className="h-48 bg-white/[0.03]" />
         ))}
       </div>
     </div>
@@ -54,23 +62,20 @@ function AssessInner() {
     activeSummary.total - activeSummary.statusCounts.unassessed;
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-10">
-      <div className="flex flex-col gap-1">
-        <p className="eyebrow text-[var(--accent)]">Control review</p>
-        <h1 className="mt-1 text-2xl font-bold tracking-tight text-[var(--fg)]">
-          Assessment
-        </h1>
-        <p className="text-sm leading-relaxed text-[var(--fg-muted)]">
-          Set a status for each control. Anything partial or not implemented gets
-          a likelihood &times; impact rating and flows into the risk register.
-        </p>
-      </div>
+    <div className="mx-auto max-w-4xl px-3 py-5 sm:px-5 sm:py-6">
+      <h2 className="section-head mb-3">
+        <span className="text-[var(--accent)]">▸</span> Control review
+      </h2>
+      <p className="prose max-w-2xl text-[13px] leading-relaxed text-[var(--fg-muted)]">
+        Set a status for each control. Anything partial or not implemented gets a
+        likelihood &times; impact rating and flows into the risk register.
+      </p>
 
       {/* Category tabs */}
       <div
         role="tablist"
         aria-label="Safeguard categories"
-        className="mt-6 flex gap-1 overflow-x-auto border-b border-[var(--border)]"
+        className="mt-4 flex gap-0 overflow-x-auto border-b border-[var(--rule)]"
       >
         {CATEGORIES.map((cat) => {
           const catSummary = summary.categories.find(
@@ -84,21 +89,21 @@ function AssessInner() {
               role="tab"
               aria-selected={isActive}
               onClick={() => setActive(cat.id)}
-              className={`relative whitespace-nowrap px-3 py-2.5 text-sm font-medium transition-colors ${
+              className={`relative whitespace-nowrap px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.08em] transition-colors ${
                 isActive
-                  ? "text-[var(--fg)]"
+                  ? "text-[var(--accent)]"
                   : "text-[var(--fg-muted)] hover:text-[var(--fg)]"
               }`}
             >
-              {cat.name.replace(" Safeguards", "").replace(" Requirements", "")}
-              <span className="ml-1.5 font-mono text-[11px] tabular-nums text-[var(--fg-faint)]">
+              {shortTab(cat.name)}
+              <span className="ml-1.5 text-[10px] tabular-nums text-[var(--fg-faint)]">
                 {done}/{catSummary.total}
               </span>
               {isActive ? (
                 <m.span
                   layoutId="assess-tab"
-                  className="absolute inset-x-0 -bottom-px h-0.5 rounded-full bg-[var(--accent)]"
-                  transition={reduce ? { duration: 0 } : SPRING}
+                  className="absolute inset-x-0 -bottom-px h-[2px] bg-[var(--accent)]"
+                  transition={reduce ? { duration: 0 } : SLIDE}
                   aria-hidden="true"
                 />
               ) : null}
@@ -107,38 +112,37 @@ function AssessInner() {
         })}
       </div>
 
-      {/* Category header + progress. Constant `initial` (hydration-safe);
-          reduced motion only flattens the transition. */}
+      {/* Category header + progress. Constant `initial` (hydration-safe). */}
       <m.div
         key={active}
         initial={{ opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={reduce ? { duration: 0 } : { duration: 0.2 }}
-        className="panel mt-6 rounded-xl p-4 sm:p-5"
+        transition={reduce ? { duration: 0 } : { duration: 0.18 }}
+        className="panel mt-4 px-3 py-3 sm:px-4"
       >
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           <div>
-            <h2 className="text-lg font-semibold text-[var(--fg)]">
+            <h2 className="text-sm font-semibold uppercase tracking-[0.06em] text-[var(--fg)]">
               {activeMeta.name}
             </h2>
-            <p className="font-mono text-xs text-[var(--fg-faint)]">
+            <p className="text-[11px] tabular-nums text-[var(--fg-faint)]">
               {activeMeta.citation}
             </p>
           </div>
-          <span className="font-mono text-[11px] uppercase tracking-wider text-[var(--fg-faint)]">
-            {assessedInCat} of {activeSummary.total} reviewed
+          <span className="label">
+            {assessedInCat}/{activeSummary.total} reviewed
           </span>
         </div>
-        <p className="mt-2 text-sm leading-relaxed text-[var(--fg-muted)]">
+        <p className="prose mt-2 text-[13px] leading-relaxed text-[var(--fg-muted)]">
           {activeMeta.description}
         </p>
-        <div className="mt-4">
+        <div className="mt-3">
           <ComplianceBar pct={activeSummary.compliancePct} label="Compliance" />
         </div>
       </m.div>
 
       {/* Controls — re-stagger on category change. */}
-      <Stagger key={`controls-${active}`} className="mt-4 space-y-4">
+      <Stagger key={`controls-${active}`} className="mt-3 space-y-3">
         {controls.map((control) => (
           <Rise as="div" key={control.id}>
             <ControlCard

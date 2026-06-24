@@ -3,7 +3,7 @@ import { statusLabel } from "@/lib/scoring";
 import type { SpecRequirement } from "@/lib/catalog";
 import { ratingStyle, statusStyle } from "@/components/ui/tokens";
 
-/** A colored pill for a derived risk rating, using the dark display tokens. */
+/** A sharp mono tag for a derived risk rating (square-ish, terminal). */
 export function RatingBadge({
   rating,
   className = "",
@@ -14,10 +14,10 @@ export function RatingBadge({
   const c = ratingStyle(rating);
   return (
     <span
-      className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border px-2.5 py-0.5 font-mono text-[11px] font-semibold uppercase tracking-wider ${c.bg} ${c.text} ${c.border} ${className}`}
+      className={`inline-flex items-center gap-1 whitespace-nowrap rounded-[2px] border px-1.5 py-px text-[10px] font-semibold uppercase leading-[1.4] tracking-[0.1em] ${c.bg} ${c.text} ${c.border} ${className}`}
     >
       <span
-        className="h-1.5 w-1.5 rounded-full"
+        className="h-1.5 w-1.5 rounded-[1px]"
         style={{ backgroundColor: c.fill }}
         aria-hidden="true"
       />
@@ -27,39 +27,39 @@ export function RatingBadge({
 }
 
 /**
- * Required vs Addressable. The distinction is real in HIPAA, so make it
- * visually distinct: Required is a solid teal emphasis, Addressable an outline.
+ * Required vs Addressable. The HIPAA distinction is real, so keep it visible:
+ * Required is a filled accent tag, Addressable an outline.
  */
 export function RequirementBadge({ requirement }: { requirement: SpecRequirement }) {
   if (requirement === "required") {
     return (
       <span
         title="Required — must be implemented"
-        className="inline-flex items-center rounded border border-[rgb(45_212_191_/_0.4)] bg-[var(--accent-dim)] px-1.5 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wider text-[var(--accent-bright)]"
+        className="inline-flex items-center rounded-[2px] border border-[rgb(34_211_238_/_0.4)] bg-[var(--accent-dim)] px-1 py-px text-[9px] font-semibold uppercase tracking-[0.1em] text-[var(--accent)]"
       >
-        Required
+        REQ
       </span>
     );
   }
   return (
     <span
       title="Addressable — implement, adopt an equivalent, or document why not"
-      className="inline-flex items-center rounded border border-[var(--border-strong)] bg-transparent px-1.5 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wider text-[var(--fg-muted)]"
+      className="inline-flex items-center rounded-[2px] border border-[var(--rule-strong)] bg-transparent px-1 py-px text-[9px] font-semibold uppercase tracking-[0.1em] text-[var(--fg-faint)]"
     >
-      Addressable
+      ADDR
     </span>
   );
 }
 
-/** A small pill describing an implementation status. */
+/** A small tag describing an implementation status. */
 export function StatusBadge({ status }: { status: ImplementationStatus }) {
   const s = statusStyle(status);
   return (
     <span
-      className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-medium ${s.bg} ${s.text} ${s.border}`}
+      className={`inline-flex items-center gap-1 whitespace-nowrap rounded-[2px] border px-1.5 py-px text-[10px] font-medium uppercase tracking-[0.08em] ${s.bg} ${s.text} ${s.border}`}
     >
       <span
-        className={`h-1.5 w-1.5 rounded-full ${s.dot}`}
+        className={`h-1.5 w-1.5 rounded-[1px] ${s.dot}`}
         aria-hidden="true"
       />
       {statusLabel(status)}

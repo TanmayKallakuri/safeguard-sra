@@ -32,8 +32,8 @@ function EditableField({
 
   if (editing) {
     return (
-      <label className="block">
-        <span className="eyebrow block">{label}</span>
+      <label className="flex min-w-0 items-center gap-2">
+        <span className="label w-12 shrink-0">{label}</span>
         <input
           autoFocus
           value={draft}
@@ -47,42 +47,34 @@ function EditableField({
             }
           }}
           placeholder={placeholder}
-          className="panel-inset mt-1.5 w-full max-w-md rounded-md border-[rgb(45_212_191_/_0.4)] px-2.5 py-1.5 text-lg font-semibold text-[var(--fg)] outline-none placeholder:text-[var(--fg-faint)]"
+          className="inset min-w-0 flex-1 border-[var(--accent)] px-2 py-1 text-sm font-semibold text-[var(--fg)] outline-none placeholder:text-[var(--fg-faint)]"
         />
       </label>
     );
   }
 
   return (
-    <div>
-      <span className="eyebrow block">{label}</span>
+    <div className="flex min-w-0 items-center gap-2">
+      <span className="label w-12 shrink-0">{label}</span>
       <button
         type="button"
         onClick={startEditing}
-        className="group mt-1.5 inline-flex items-center gap-1.5 text-left"
+        className="group inline-flex min-w-0 items-center gap-1.5 text-left"
         title={`Edit ${label.toLowerCase()}`}
       >
         <span
-          className={`text-lg font-semibold text-[var(--fg)] ${
-            value ? "" : "text-[var(--fg-faint)] italic"
+          className={`truncate text-sm font-semibold ${
+            value ? "text-[var(--fg)]" : "italic text-[var(--fg-faint)]"
           }`}
         >
           {value || placeholder}
         </span>
-        <svg
-          viewBox="0 0 24 24"
-          className="h-3.5 w-3.5 text-[var(--fg-faint)] opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100"
-          fill="none"
+        <span
+          className="text-[var(--fg-faint)] opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100"
           aria-hidden="true"
         >
-          <path
-            d="M4 20h4l10-10-4-4L4 16v4ZM14 6l4 4"
-            stroke="currentColor"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
+          ✎
+        </span>
       </button>
     </div>
   );
@@ -91,9 +83,9 @@ function EditableField({
 export function OrgHeader() {
   const { doc, setMeta } = useAssessment();
   return (
-    <div className="grid gap-4 sm:grid-cols-2">
+    <div className="grid gap-2 sm:grid-cols-2 sm:gap-6">
       <EditableField
-        label="Organization"
+        label="Org"
         value={doc.orgName}
         placeholder="Name your organization"
         onCommit={(orgName) => setMeta({ orgName })}

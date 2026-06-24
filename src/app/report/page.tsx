@@ -12,10 +12,10 @@ function cap(s: string) {
 
 function ReportSkeleton() {
   return (
-    <div className="mx-auto max-w-4xl animate-pulse px-4 py-10 sm:px-6">
-      <div className="h-9 w-80 rounded bg-white/5" />
-      <div className="mt-6 h-40 rounded-xl bg-white/[0.03]" />
-      <div className="mt-6 h-64 rounded-xl bg-white/[0.03]" />
+    <div className="mx-auto max-w-4xl animate-pulse px-3 py-6 sm:px-5">
+      <div className="h-8 w-72 bg-white/5" />
+      <div className="mt-4 h-32 bg-white/[0.03]" />
+      <div className="mt-4 h-56 bg-white/[0.03]" />
     </div>
   );
 }
@@ -30,54 +30,53 @@ export default function ReportPage() {
     : formatDate(doc.updatedAt);
 
   return (
-    <div className="print-container mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-10">
-      <div className="no-print mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm text-[var(--muted)]">
+    <div className="print-container mx-auto max-w-4xl px-3 py-5 sm:px-5 sm:py-6">
+      <div className="no-print mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <p className="prose text-[13px] text-[var(--fg-muted)]">
           A one-page summary you can print, save as PDF, or copy as Markdown.
         </p>
         <ReportToolbar />
       </div>
 
       {/* Report header */}
-      <header className="border-b-2 border-[var(--foreground)] pb-4">
-        <p className="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-[var(--accent)] print:text-black">
+      <header className="border-b-2 border-[var(--foreground)] pb-3">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--accent)] print:text-black">
           HIPAA Security Risk Assessment
         </p>
-        <h1 className="mt-1 text-3xl font-bold tracking-tight text-[var(--fg)] print:text-black">
+        <h1 className="mt-1 text-2xl font-bold tracking-tight text-[var(--fg)] print:text-black">
           {doc.orgName || "Organization"}
         </h1>
-        <div className="mt-2 flex flex-wrap gap-x-6 gap-y-1 text-sm text-[var(--muted)]">
+        <div className="mt-2 flex flex-wrap gap-x-6 gap-y-1 text-[12px] text-[var(--muted)]">
           <span>
-            <span className="font-medium text-[var(--foreground)]">Assessor:</span>{" "}
-            {doc.assessorName || "—"}
+            <span className="label not-italic">Assessor</span>{" "}
+            <span className="text-[var(--foreground)]">{doc.assessorName || "—"}</span>
           </span>
           <span>
-            <span className="font-medium text-[var(--foreground)]">Date:</span>{" "}
-            {reportDate}
+            <span className="label">Date</span>{" "}
+            <span className="tabular-nums text-[var(--foreground)]">{reportDate}</span>
           </span>
           <span>
-            <span className="font-medium text-[var(--foreground)]">Framework:</span>{" "}
-            45 CFR Part 164, Subpart C
+            <span className="label">Framework</span>{" "}
+            <span className="text-[var(--foreground)]">45 CFR Part 164, Subpart C</span>
           </span>
         </div>
       </header>
 
       {/* Executive summary */}
-      <section className="mt-6 print-avoid-break">
-        <h2 className="text-lg font-semibold">Executive summary</h2>
-        <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <SummaryStat
-            value={`${summary.compliancePct}%`}
-            label="Compliance"
-          />
+      <section className="mt-5 print-avoid-break">
+        <h2 className="text-sm font-semibold uppercase tracking-[0.08em] text-[var(--foreground)]">
+          Executive summary
+        </h2>
+        <div className="mt-2.5 grid grid-cols-2 gap-px border border-[var(--border)] bg-[var(--border)] sm:grid-cols-4 print:gap-0">
+          <SummaryStat value={`${summary.compliancePct}%`} label="Compliance" />
           <SummaryStat value={`${summary.assessedPct}%`} label="Assessed" />
           <SummaryStat value={`${register.length}`} label="Open risks" />
           <SummaryStat
             value={`${summary.riskCounts.critical + summary.riskCounts.high}`}
-            label="High / critical"
+            label="High / crit"
           />
         </div>
-        <p className="mt-4 text-sm leading-relaxed text-[var(--muted)]">
+        <p className="prose mt-4 text-[13px] leading-relaxed text-[var(--muted)]">
           <span className="font-medium text-[var(--foreground)]">Methodology.</span>{" "}
           Risk = Likelihood × Impact on a 3×3 NIST SP 800-30-style matrix. Each
           safeguard marked Partial or Not Implemented is rated for likelihood and
@@ -89,12 +88,14 @@ export default function ReportPage() {
       </section>
 
       {/* Category compliance table */}
-      <section className="mt-8 print-avoid-break">
-        <h2 className="text-lg font-semibold">Category compliance</h2>
-        <div className="mt-3 overflow-hidden rounded-lg border border-[var(--border)]">
-          <table className="w-full border-collapse text-sm">
+      <section className="mt-6 print-avoid-break">
+        <h2 className="text-sm font-semibold uppercase tracking-[0.08em] text-[var(--foreground)]">
+          Category compliance
+        </h2>
+        <div className="mt-2.5 overflow-hidden border border-[var(--border)]">
+          <table className="w-full border-collapse text-[12px]">
             <thead>
-              <tr className="bg-[var(--bg-inset)] text-left font-mono text-[10px] uppercase tracking-wider text-[var(--muted)] print:bg-white print:text-black">
+              <tr className="bg-[var(--bg-inset)] text-left text-[10px] uppercase tracking-[0.1em] text-[var(--muted)] print:bg-white print:text-black">
                 <th className="px-3 py-2 font-semibold">Safeguard category</th>
                 <th className="px-3 py-2 font-semibold">Citation</th>
                 <th className="px-3 py-2 text-right font-semibold">Compliance</th>
@@ -110,11 +111,13 @@ export default function ReportPage() {
                     key={cat.category}
                     className="border-t border-[var(--border)] bg-[var(--surface)]"
                   >
-                    <td className="px-3 py-2 font-medium">{meta.name}</td>
-                    <td className="px-3 py-2 font-mono text-[11px] text-[var(--muted)]">
+                    <td className="px-3 py-2 font-medium text-[var(--foreground)]">
+                      {meta.name}
+                    </td>
+                    <td className="px-3 py-2 tabular-nums text-[var(--muted)]">
                       {meta.citation}
                     </td>
-                    <td className="px-3 py-2 text-right tabular-nums">
+                    <td className="px-3 py-2 text-right font-semibold tabular-nums text-[var(--foreground)]">
                       {cat.compliancePct}%
                     </td>
                     <td className="px-3 py-2 text-right tabular-nums text-[var(--muted)]">
@@ -132,24 +135,25 @@ export default function ReportPage() {
       </section>
 
       {/* Full risk register */}
-      <section className="mt-8">
+      <section className="mt-6">
         <div className="flex items-baseline justify-between">
-          <h2 className="text-lg font-semibold">Risk register</h2>
-          <span className="text-xs text-[var(--muted)]">
-            {register.length} open risk{register.length === 1 ? "" : "s"},
-            worst-first
+          <h2 className="text-sm font-semibold uppercase tracking-[0.08em] text-[var(--foreground)]">
+            Risk register
+          </h2>
+          <span className="text-[10px] uppercase tracking-[0.1em] text-[var(--muted)]">
+            {register.length} open · worst-first
           </span>
         </div>
         {register.length === 0 ? (
-          <p className="mt-3 rounded-lg border border-dashed border-[var(--border)] p-4 text-sm text-[var(--muted)]">
+          <p className="prose mt-2.5 border border-dashed border-[var(--border)] p-4 text-[13px] text-[var(--muted)]">
             No open risks — every assessed control is implemented or not
             applicable.
           </p>
         ) : (
-          <div className="mt-3 overflow-hidden rounded-lg border border-[var(--border)]">
-            <table className="w-full border-collapse text-sm">
+          <div className="mt-2.5 overflow-hidden border border-[var(--border)]">
+            <table className="w-full border-collapse text-[12px]">
               <thead>
-                <tr className="bg-[var(--bg-inset)] text-left font-mono text-[10px] uppercase tracking-wider text-[var(--muted)] print:bg-white print:text-black">
+                <tr className="bg-[var(--bg-inset)] text-left text-[10px] uppercase tracking-[0.1em] text-[var(--muted)] print:bg-white print:text-black">
                   <th className="px-3 py-2 font-semibold">Control</th>
                   <th className="px-3 py-2 font-semibold">Status</th>
                   <th className="px-3 py-2 font-semibold">L</th>
@@ -165,24 +169,26 @@ export default function ReportPage() {
                     className="border-t border-[var(--border)] align-top bg-[var(--surface)] print-avoid-break"
                   >
                     <td className="px-3 py-2">
-                      <span className="font-medium">{entry.control.name}</span>
-                      <span className="mt-0.5 block font-mono text-[10px] text-[var(--muted)]">
+                      <span className="font-medium text-[var(--foreground)]">
+                        {entry.control.name}
+                      </span>
+                      <span className="mt-0.5 block text-[10px] tabular-nums text-[var(--muted)]">
                         {entry.control.citation}
                       </span>
                     </td>
                     <td className="px-3 py-2">
                       <StatusBadge status={entry.status} />
                     </td>
-                    <td className="px-3 py-2 text-[var(--muted)]">
+                    <td className="px-3 py-2 uppercase text-[var(--muted)]">
                       {cap(entry.likelihood)}
                     </td>
-                    <td className="px-3 py-2 text-[var(--muted)]">
+                    <td className="px-3 py-2 uppercase text-[var(--muted)]">
                       {cap(entry.impact)}
                     </td>
                     <td className="px-3 py-2">
                       <RatingBadge rating={entry.rating} />
                     </td>
-                    <td className="px-3 py-2 text-xs leading-relaxed text-[var(--muted)]">
+                    <td className="prose px-3 py-2 text-[12px] leading-relaxed text-[var(--muted)]">
                       {entry.control.remediation}
                     </td>
                   </tr>
@@ -193,8 +199,8 @@ export default function ReportPage() {
         )}
       </section>
 
-      <footer className="mt-8 border-t border-[var(--border)] pt-4 text-xs text-[var(--muted)]">
-        Generated with Safeguard. Portfolio demonstration using a fictional clinic;
+      <footer className="prose mt-6 border-t border-[var(--border)] pt-3 text-[11px] text-[var(--muted)]">
+        Generated with safeguard. Portfolio demonstration using a fictional clinic;
         not legal advice and does not by itself establish compliance.
       </footer>
     </div>
@@ -203,11 +209,11 @@ export default function ReportPage() {
 
 function SummaryStat({ value, label }: { value: string; label: string }) {
   return (
-    <div className="panel rounded-lg p-3 print:border print:bg-white print:shadow-none">
-      <div className="font-mono text-2xl font-semibold tabular-nums tracking-tight text-[var(--fg)] print:text-black">
+    <div className="bg-[var(--bg-panel)] p-3 print:bg-white">
+      <div className="text-2xl font-bold tabular-nums tracking-tight text-[var(--fg)] print:text-black">
         {value}
       </div>
-      <div className="mt-0.5 font-mono text-[10px] uppercase tracking-wider text-[var(--muted)] print:text-black">
+      <div className="mt-0.5 text-[10px] uppercase tracking-[0.1em] text-[var(--muted)] print:text-black">
         {label}
       </div>
     </div>

@@ -11,32 +11,34 @@ import type { Variants } from "motion/react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
 /* ------------------------------------------------------------------ *
- * Shared transitions
+ * Shared transitions — instrument-like: crisp tweens, not bouncy springs.
  * ------------------------------------------------------------------ */
 
-export const SPRING = { type: "spring", stiffness: 420, damping: 34, mass: 0.9 } as const;
-export const SPRING_SOFT = { type: "spring", stiffness: 260, damping: 30 } as const;
-export const POP = { type: "spring", stiffness: 600, damping: 22, mass: 0.6 } as const;
+// Fast, near-linear ease (mechanical). Used for entrances and indicators.
+export const CRISP = { duration: 0.18, ease: [0.2, 0, 0, 1] } as const;
+// Slightly snappier for the sliding active-tab indicator.
+export const SLIDE = { duration: 0.22, ease: [0.2, 0, 0, 1] } as const;
+// Quick bar fill — near-linear.
+export const FILL = { duration: 0.45, ease: [0.25, 0.1, 0.25, 1] } as const;
 
 /* ------------------------------------------------------------------ *
- * Page-load reveal: container stagger + child rise. Reduced motion
- * flattens to an instant, transform-free fade handled by gating below.
+ * Page-load reveal: tight container stagger + crisp child rise.
  * ------------------------------------------------------------------ */
 
 const containerVariants: Variants = {
   hidden: {},
   show: {
-    transition: { staggerChildren: 0.05, delayChildren: 0.02 },
+    transition: { staggerChildren: 0.035, delayChildren: 0.01 },
   },
 };
 
-// `hidden` is identical regardless of reduced-motion so the SSR markup is
+// `hidden` is identical regardless of reduced-motion so SSR markup is
 // deterministic; reduced motion only flattens the transition (see `Rise`).
-// The `show.transition` (SPRING) is intentionally overridden per-component:
-// `Rise` passes `transition={flatTransition}` for reduced motion, which wins.
+// `show.transition` (CRISP) is intentionally overridden per-component when
+// `Rise` passes `transition={flatTransition}` for reduced motion.
 const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 10 },
-  show: { opacity: 1, y: 0, transition: SPRING },
+  hidden: { opacity: 0, y: 6 },
+  show: { opacity: 1, y: 0, transition: CRISP },
 };
 
 const flatTransition = { duration: 0 } as const;
@@ -67,7 +69,7 @@ export function Stagger({
   );
 }
 
-/** A single staggered child that fades + rises in (or just fades if reduced). */
+/** A single staggered child that fades + rises (or just appears, if reduced). */
 export function Rise({
   children,
   className,
@@ -91,13 +93,12 @@ export function Rise({
 }
 
 /* ------------------------------------------------------------------ *
- * Count-up metric: animates a spring from 0 to `value`, rendering the
- * rounded number. Reduced motion snaps to the final value post-mount.
+ * Count-up metric: odometer-style tick from 0 to `value`.
  *
- * Hydration-safe: the FIRST render is identical on the server and on every
- * client (reduced motion or not) — it always shows `0{suffix}`. We never
- * branch the rendered output on `useReducedMotion()` during render; the count
- * (or the instant snap) is driven from a `useEffect` after mount.
+ * Hydration-safe: the FIRST render is identical on the server and every client
+ * (reduced motion or not) — it always shows `0{suffix}`. We never branch the
+ * rendered output on `useReducedMotion()` during render; the count (or the
+ * instant snap) is driven from a `useEffect` after mount.
  * ------------------------------------------------------------------ */
 
 export function CountUp({
@@ -111,14 +112,12 @@ export function CountUp({
 }) {
   const reduce = useReducedMotion();
   const mv = useMotionValue(0);
-  const spring = useSpring(mv, { stiffness: 90, damping: 20, mass: 1 });
-  // Deterministic first-paint text, identical on server + client.
+  // Stiff, well-damped spring reads like a fast counter/odometer, not a bounce.
+  const spring = useSpring(mv, { stiffness: 140, damping: 26, mass: 0.8 });
   const [display, setDisplay] = useState(`0${suffix}`);
 
   useEffect(() => {
-    // Always update via the spring's change subscription (asynchronous, so no
-    // synchronous setState in the effect body). Reduced motion `jump`s the
-    // spring straight to the target — one notification, no per-frame work.
+    // Async change subscription (no synchronous setState in the effect body).
     const unsubscribe = spring.on("change", (v) =>
       setDisplay(`${Math.round(v)}${suffix}`),
     );
@@ -134,7 +133,7 @@ export function CountUp({
 }
 
 /* ------------------------------------------------------------------ *
- * Bar: animates scaleX 0 -> pct (transform-origin left), in-view.
+ * Bar: animates scaleX 0 -> pct (transform-origin left), in-view, quick.
  * Never animates width.
  * ------------------------------------------------------------------ */
 
@@ -149,12 +148,11 @@ export function GrowBar({
 }) {
   const reduce = useReducedMotion();
   const ref = useRef<HTMLDivElement | null>(null);
-  const inView = useInView(ref, { once: true, amount: 0.4 });
+  const inView = useInView(ref, { once: true, amount: 0.3 });
   const target = Math.max(0, Math.min(1, pct / 100));
 
-  // `initial` is a constant (`scaleX: 0`) so SSR markup is identical for every
-  // client; reduced motion snaps to `target` via the zero-duration transition
-  // applied post-mount, not in the server HTML.
+  // Constant `initial` (scaleX:0) keeps SSR markup identical for every client;
+  // reduced motion snaps to target via the zero-duration transition post-mount.
   return (
     <div ref={ref} className="h-full w-full">
       <m.div
@@ -162,9 +160,37 @@ export function GrowBar({
         style={{ originX: 0, height: "100%", width: "100%" }}
         initial={{ scaleX: 0 }}
         animate={{ scaleX: inView || reduce ? target : 0 }}
-        transition={reduce ? { duration: 0 } : { ...SPRING_SOFT, delay }}
+        transition={reduce ? { duration: 0 } : { ...FILL, delay }}
       />
     </div>
   );
 }
 
+/* ------------------------------------------------------------------ *
+ * Cell populate: a fast, tight opacity+scale tick for heatmap cells.
+ * Used inside a Stagger so cells "boot up" in sequence.
+ * ------------------------------------------------------------------ */
+
+const cellVariants: Variants = {
+  hidden: { opacity: 0, scale: 0.94 },
+  show: { opacity: 1, scale: 1, transition: { duration: 0.16, ease: [0.2, 0, 0, 1] } },
+};
+
+export function Cell({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  const reduce = useReducedMotion();
+  return (
+    <m.div
+      className={className}
+      variants={cellVariants}
+      transition={reduce ? flatTransition : undefined}
+    >
+      {children}
+    </m.div>
+  );
+}
