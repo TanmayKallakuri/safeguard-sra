@@ -54,7 +54,7 @@ export function ReportToolbar() {
       <button
         type="button"
         onClick={() => window.print()}
-        className="inline-flex items-center gap-2 border border-[var(--accent)] bg-[var(--accent)] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#04130d] transition-colors hover:brightness-110 active:translate-y-px"
+        className="inline-flex items-center gap-2 border border-[var(--accent)] bg-[var(--accent)] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-white transition hover:brightness-90 active:translate-y-px"
       >
         <span>⎙</span>
         Print / PDF

@@ -5,23 +5,22 @@ import type {
 } from "@/lib/scoring";
 
 /**
- * Threat-console display tokens for risk ratings and implementation statuses.
+ * Light-glass display tokens for risk ratings and implementation statuses.
  *
  * The locked lib helper `ratingColor()` (in `src/lib/scoring/risk.ts`) returns
- * light-mode Tailwind classes that don't fit this dark console theme. Rather
- * than touch the locked file, the UI maps ratings/statuses to its own dark
- * tokens here. Same rating keys, terminal styling — the risk signal is the only
- * saturated color in the whole interface.
+ * its own light Tailwind classes; the UI maps ratings/statuses to these tokens
+ * instead so chips stay clearly distinct and AA-legible on the frosted-white
+ * surfaces. Same rating keys — only the styling changes.
  */
 
 export interface RatingStyle {
-  /** Tinted background for badges/cells. */
+  /** Soft tinted background for chips. */
   bg: string;
-  /** Bright readable text. */
+  /** Dark, AA-legible text. */
   text: string;
   /** Border at low opacity. */
   border: string;
-  /** Solid fill (CSS color/var) for bars, cells, dots. */
+  /** Solid fill (CSS var) for bars, cells, dots. */
   fill: string;
   /** Tailwind utility for a solid bar/dot fill. */
   bar: string;
@@ -30,39 +29,39 @@ export interface RatingStyle {
 
 const RATING_STYLES: Record<RiskRating, RatingStyle> = {
   critical: {
-    bg: "bg-[rgb(245_84_79_/_0.14)]",
-    text: "text-[#f87b77]",
-    border: "border-[rgb(245_84_79_/_0.4)]",
+    bg: "bg-[rgb(220_38_38_/_0.1)]",
+    text: "text-[#b91c1c]",
+    border: "border-[rgb(220_38_38_/_0.3)]",
     fill: "var(--critical)",
     bar: "bg-[var(--critical)]",
     label: "CRIT",
   },
   high: {
-    bg: "bg-[rgb(245_147_74_/_0.14)]",
-    text: "text-[#f7ab73]",
-    border: "border-[rgb(245_147_74_/_0.4)]",
+    bg: "bg-[rgb(234_88_12_/_0.1)]",
+    text: "text-[#c2410c]",
+    border: "border-[rgb(234_88_12_/_0.3)]",
     fill: "var(--high)",
     bar: "bg-[var(--high)]",
     label: "HIGH",
   },
   medium: {
-    bg: "bg-[rgb(232_193_74_/_0.13)]",
-    text: "text-[#edcf73]",
-    border: "border-[rgb(232_193_74_/_0.38)]",
+    bg: "bg-[rgb(202_138_4_/_0.12)]",
+    text: "text-[#a16207]",
+    border: "border-[rgb(202_138_4_/_0.32)]",
     fill: "var(--medium)",
     bar: "bg-[var(--medium)]",
     label: "MED",
   },
   low: {
-    bg: "bg-[rgb(70_194_133_/_0.13)]",
-    text: "text-[#6dd1a3]",
-    border: "border-[rgb(70_194_133_/_0.36)]",
+    bg: "bg-[rgb(5_150_105_/_0.1)]",
+    text: "text-[#047857]",
+    border: "border-[rgb(5_150_105_/_0.3)]",
     fill: "var(--low)",
     bar: "bg-[var(--low)]",
     label: "LOW",
   },
   none: {
-    bg: "bg-transparent",
+    bg: "bg-[var(--glass-inset)]",
     text: "text-[var(--fg-faint)]",
     border: "border-[var(--rule)]",
     fill: "var(--fg-faint)",
@@ -71,7 +70,7 @@ const RATING_STYLES: Record<RiskRating, RatingStyle> = {
   },
 };
 
-/** Threat-console display tokens for a derived risk rating. */
+/** Light-glass display tokens for a derived risk rating. */
 export function ratingStyle(rating: RiskRating): RatingStyle {
   return RATING_STYLES[rating];
 }
@@ -96,42 +95,42 @@ const STATUS_FILL: Record<ImplementationStatus, string> = {
 
 const STATUS_FULL: Record<ImplementationStatus, StatusStyle> = {
   implemented: {
-    bg: "bg-[rgb(70_194_133_/_0.1)]",
-    text: "text-[#6dd1a3]",
-    border: "border-[rgb(70_194_133_/_0.34)]",
-    active: "bg-[var(--low)] text-[#04120b]",
+    bg: "bg-[rgb(5_150_105_/_0.1)]",
+    text: "text-[#047857]",
+    border: "border-[rgb(5_150_105_/_0.3)]",
+    active: "bg-[#047857] text-white",
     bar: "bg-[var(--low)]",
     dot: "bg-[var(--low)]",
   },
   partial: {
-    bg: "bg-[rgb(232_193_74_/_0.1)]",
-    text: "text-[#edcf73]",
-    border: "border-[rgb(232_193_74_/_0.34)]",
-    active: "bg-[var(--medium)] text-[#161100]",
+    bg: "bg-[rgb(202_138_4_/_0.12)]",
+    text: "text-[#a16207]",
+    border: "border-[rgb(202_138_4_/_0.32)]",
+    active: "bg-[#a16207] text-white",
     bar: "bg-[var(--medium)]",
     dot: "bg-[var(--medium)]",
   },
   "not-implemented": {
-    bg: "bg-[rgb(245_84_79_/_0.1)]",
-    text: "text-[#f87b77]",
-    border: "border-[rgb(245_84_79_/_0.34)]",
-    active: "bg-[var(--critical)] text-[#160404]",
+    bg: "bg-[rgb(220_38_38_/_0.1)]",
+    text: "text-[#b91c1c]",
+    border: "border-[rgb(220_38_38_/_0.3)]",
+    active: "bg-[var(--critical)] text-white",
     bar: "bg-[var(--critical)]",
     dot: "bg-[var(--critical)]",
   },
   "not-applicable": {
-    bg: "bg-white/[0.04]",
+    bg: "bg-[rgb(30_41_59_/_0.05)]",
     text: "text-[var(--fg-muted)]",
     border: "border-[var(--rule)]",
-    active: "bg-[#3a4654] text-[var(--fg)]",
-    bar: "bg-[#3a4654]",
-    dot: "bg-[#3a4654]",
+    active: "bg-[#64748b] text-white",
+    bar: "bg-[#94a3b8]",
+    dot: "bg-[#94a3b8]",
   },
   unassessed: {
-    bg: "bg-white/[0.02]",
+    bg: "bg-[rgb(30_41_59_/_0.03)]",
     text: "text-[var(--fg-faint)]",
     border: "border-[var(--rule)]",
-    active: "bg-white/15 text-[var(--fg)]",
+    active: "bg-[#64748b] text-white",
     bar: "bg-[var(--rule-strong)]",
     dot: "bg-[var(--rule-strong)]",
   },

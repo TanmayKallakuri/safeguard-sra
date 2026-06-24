@@ -27,11 +27,11 @@ function shortTab(name: string): string {
 function AssessSkeleton() {
   return (
     <div className="mx-auto max-w-4xl animate-pulse px-3 py-6 sm:px-5">
-      <div className="h-5 w-40 bg-white/5" />
-      <div className="mt-4 h-9 bg-white/[0.03]" />
+      <div className="h-5 w-40 rounded-md bg-white/40" />
+      <div className="mt-4 h-9 rounded-lg bg-white/40" />
       <div className="mt-4 space-y-3">
         {[0, 1, 2].map((i) => (
-          <div key={i} className="h-48 bg-white/[0.03]" />
+          <div key={i} className="h-48 rounded-2xl bg-white/40" />
         ))}
       </div>
     </div>

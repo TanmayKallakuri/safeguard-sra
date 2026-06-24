@@ -56,7 +56,7 @@ export function RiskMatrix({ register }: { register: RiskRegisterEntry[] }) {
         </div>
 
         <div className="flex-1">
-          <Stagger className="grid grid-cols-3 gap-px border border-[var(--rule)] bg-[var(--rule)]">
+          <Stagger className="grid grid-cols-3 gap-px overflow-hidden rounded-xl border border-[var(--rule)] bg-[var(--rule)]">
             {LIKELIHOODS.map((likelihood) =>
               IMPACTS.map((impact) => {
                 const count = counts[likelihood][impact];
@@ -65,11 +65,13 @@ export function RiskMatrix({ register }: { register: RiskRegisterEntry[] }) {
                 // Intensity scales 0..1 with count relative to the busiest cell.
                 const intensity = max === 0 ? 0 : count / max;
                 const empty = count === 0;
-                const bgAlpha = empty ? 0.05 : 0.12 + intensity * 0.38;
+                // Tint solid white with the rating color so cells stay opaque
+                // and legible over the fog (not translucent / muddy).
+                const tint = empty ? 8 : Math.round(16 + intensity * 32);
                 return (
                   <Cell
                     key={`${likelihood}-${impact}`}
-                    className="aspect-[4/3] min-h-[58px]"
+                    className="aspect-[4/3] min-h-[60px]"
                   >
                     <button
                       type="button"
@@ -80,36 +82,33 @@ export function RiskMatrix({ register }: { register: RiskRegisterEntry[] }) {
                       aria-label={`${count} open ${
                         count === 1 ? "risk" : "risks"
                       } at likelihood ${likelihood}, impact ${impact} — ${rating}`}
-                      className={`group relative flex h-full w-full flex-col items-center justify-center transition-colors ${
+                      className={`group relative flex h-full w-full flex-col items-center justify-center transition-all ${
                         empty
                           ? "cursor-default"
-                          : "cursor-pointer hover:brightness-125"
+                          : "cursor-pointer hover:brightness-105 hover:saturate-150"
                       }`}
                       style={{
                         backgroundColor: empty
-                          ? "var(--bg-inset)"
-                          : `color-mix(in oklab, ${c.fill} ${Math.round(
-                              bgAlpha * 100,
-                            )}%, var(--bg-inset))`,
+                          ? "rgba(255,255,255,0.55)"
+                          : `color-mix(in srgb, ${c.fill} ${tint}%, #ffffff)`,
                       }}
                     >
                       <span
-                        className={`text-xl font-bold leading-none tabular-nums ${
+                        className={`text-2xl font-bold leading-none tabular-nums ${
                           empty ? "text-[var(--fg-faint)]" : c.text
                         }`}
                       >
                         {count}
                       </span>
                       <span
-                        className="mt-1 text-[8px] font-semibold uppercase leading-none tracking-[0.12em]"
+                        className="mt-1 text-[8px] font-semibold uppercase leading-none tracking-[0.1em]"
                         style={{ color: empty ? "var(--fg-faint)" : c.fill }}
                       >
                         {c.label}
                       </span>
-                      {/* Hairline accent edge on hover for non-empty cells. */}
                       {!empty ? (
                         <span
-                          className="pointer-events-none absolute inset-0 border border-transparent group-hover:border-[var(--rule-strong)]"
+                          className="pointer-events-none absolute inset-0 border-2 border-transparent transition-colors group-hover:border-[var(--accent)]/40"
                           aria-hidden="true"
                         />
                       ) : null}

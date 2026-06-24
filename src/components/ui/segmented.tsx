@@ -13,8 +13,8 @@ export interface SegmentedOption<T extends string> {
 
 /**
  * Accessible segmented control (radiogroup of buttons). The active fill is a
- * shared-element `layoutId` that slides crisply between options. Sharp corners,
- * hairline track — terminal, not pill. Reduced motion snaps without sliding.
+ * shared-element `layoutId` that slides crisply between options on a soft glass
+ * track. Reduced motion snaps without sliding.
  */
 export function Segmented<T extends string>({
   options,
@@ -42,12 +42,12 @@ export function Segmented<T extends string>({
     <div
       role="radiogroup"
       aria-label={ariaLabel}
-      className="inset inline-flex flex-wrap gap-px p-px"
+      className="inline-flex flex-wrap gap-0.5 rounded-lg border border-[var(--rule)] bg-[var(--glass-inset)] p-0.5"
     >
       {options.map((opt) => {
         const active = opt.value === value;
         const activeFill =
-          opt.activeClass ?? "bg-[var(--accent)] text-[#04130d]";
+          opt.activeClass ?? "bg-[var(--accent)] text-white";
         return (
           <button
             key={opt.value}
@@ -55,16 +55,16 @@ export function Segmented<T extends string>({
             role="radio"
             aria-checked={active}
             onClick={() => onChange(opt.value)}
-            className={`relative font-medium uppercase tracking-[0.06em] transition-colors ${pad} ${
+            className={`relative rounded-md font-medium uppercase tracking-[0.05em] transition-colors ${pad} ${
               active
                 ? "text-current"
-                : "text-[var(--fg-muted)] hover:bg-white/[0.03] hover:text-[var(--fg)]"
+                : "text-[var(--fg-muted)] hover:bg-white/50 hover:text-[var(--fg)]"
             }`}
           >
             {active ? (
               <m.span
                 layoutId={`seg-${groupId}`}
-                className={`absolute inset-0 ${activeFill}`}
+                className={`absolute inset-0 rounded-md shadow-sm ${activeFill}`}
                 transition={reduce ? { duration: 0 } : SLIDE}
                 aria-hidden="true"
               />

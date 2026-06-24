@@ -7,11 +7,38 @@ import { useAssessment } from "@/components/assessment-provider";
 import { SLIDE } from "@/components/ui/motion";
 
 const LINKS = [
-  { href: "/", label: "dashboard" },
-  { href: "/assess", label: "assess" },
-  { href: "/register", label: "register" },
-  { href: "/report", label: "report" },
+  { href: "/", label: "Dashboard" },
+  { href: "/assess", label: "Assess" },
+  { href: "/register", label: "Register" },
+  { href: "/report", label: "Report" },
 ] as const;
+
+function ShieldMark() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className="h-5 w-5 text-[var(--accent)]"
+      fill="none"
+      aria-hidden="true"
+    >
+      <path
+        d="M12 2.5 4 5.2v6.1c0 4.6 3.2 8.4 8 10.2 4.8-1.8 8-5.6 8-10.2V5.2L12 2.5Z"
+        fill="currentColor"
+        fillOpacity="0.16"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+      />
+      <path
+        d="m8.6 12 2.3 2.3L15.6 9.6"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
 
 export function SiteNav() {
   const pathname = usePathname();
@@ -27,76 +54,80 @@ export function SiteNav() {
 
   return (
     <header className="no-print frost sticky top-0 z-20">
-      {/* Tier 1 — status bar: wordmark + live telemetry. */}
-      <div className="border-b border-[var(--rule)]">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-3 py-1.5 sm:px-5">
-          <Link
-            href="/"
-            className="flex items-baseline gap-0 text-[15px] font-bold tracking-tight text-[var(--fg)]"
-          >
-            safeguard
-            <span className="cursor" aria-hidden="true" />
+      <div className="mx-auto flex max-w-6xl flex-col gap-2 px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:px-5">
+        <div className="flex items-center justify-between gap-3">
+          <Link href="/" className="flex items-center gap-2">
+            <ShieldMark />
+            <span className="flex items-baseline gap-1.5">
+              <span className="text-[15px] font-bold tracking-tight text-[var(--fg)]">
+                safeguard
+              </span>
+              <span className="hidden text-[10px] uppercase tracking-[0.14em] text-[var(--fg-faint)] sm:inline">
+                SRA
+              </span>
+            </span>
           </Link>
 
           {ready ? (
-            <div className="flex items-center gap-2 overflow-x-auto text-[11px] font-medium tabular-nums sm:gap-3">
+            <span className="text-[11px] font-medium tabular-nums text-[var(--fg-muted)] sm:hidden">
+              {summary.compliancePct}% compliant
+            </span>
+          ) : null}
+        </div>
+
+        <div className="flex items-center gap-2 sm:gap-3">
+          <nav
+            aria-label="Primary"
+            className="flex items-center gap-0.5 overflow-x-auto"
+          >
+            {LINKS.map((link) => {
+              const active =
+                link.href === "/"
+                  ? pathname === "/"
+                  : pathname.startsWith(link.href);
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  aria-current={active ? "page" : undefined}
+                  className={`relative whitespace-nowrap rounded-lg px-3 py-1.5 text-[13px] font-medium tracking-tight transition-colors ${
+                    active
+                      ? "text-[var(--accent)]"
+                      : "text-[var(--fg-muted)] hover:text-[var(--fg)]"
+                  }`}
+                >
+                  {active ? (
+                    <m.span
+                      layoutId="nav-active"
+                      className="absolute inset-0 rounded-lg border border-[var(--accent)]/30 bg-[var(--accent-dim)]"
+                      transition={reduce ? { duration: 0 } : SLIDE}
+                      aria-hidden="true"
+                    />
+                  ) : null}
+                  <span className="relative z-10">{link.label}</span>
+                </Link>
+              );
+            })}
+          </nav>
+
+          {/* Telemetry chip. */}
+          {ready ? (
+            <div className="hidden items-center gap-2 rounded-lg border border-[var(--rule)] bg-[var(--glass-inset)] px-2.5 py-1 text-[11px] tabular-nums lg:flex">
               <Telemetry
-                label="OPEN"
+                label="Open"
                 value={openRisks}
                 tone={openRisks === 0 ? "low" : "warn"}
               />
-              <span className="text-[var(--fg-faint)]">·</span>
+              <span className="text-[var(--rule-strong)]">·</span>
               <Telemetry
-                label="CRIT"
+                label="Crit"
                 value={summary.riskCounts.critical}
                 tone={summary.riskCounts.critical > 0 ? "crit" : "muted"}
               />
-              <span className="text-[var(--fg-faint)]">·</span>
-              <Telemetry label="COMPLIANCE" value={summary.compliancePct} suffix="%" />
             </div>
-          ) : (
-            <span className="text-[11px] text-[var(--fg-faint)]">connecting…</span>
-          )}
+          ) : null}
         </div>
       </div>
-
-      {/* Tier 2 — path-style nav. */}
-      <nav
-        aria-label="Primary"
-        className="border-b border-[var(--rule)] bg-[color-mix(in_oklab,var(--bg-base)_60%,transparent)]"
-      >
-        <div className="mx-auto flex max-w-6xl items-center gap-0.5 overflow-x-auto px-2 sm:px-4">
-          {LINKS.map((link) => {
-            const active =
-              link.href === "/"
-                ? pathname === "/"
-                : pathname.startsWith(link.href);
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                aria-current={active ? "page" : undefined}
-                className={`relative whitespace-nowrap px-2.5 py-2 text-[13px] tracking-tight transition-colors ${
-                  active
-                    ? "text-[var(--accent)]"
-                    : "text-[var(--fg-muted)] hover:text-[var(--fg)]"
-                }`}
-              >
-                <span className="text-[var(--fg-faint)]">~/</span>
-                {link.label}
-                {active ? (
-                  <m.span
-                    layoutId="nav-active"
-                    className="absolute inset-x-0 -bottom-px h-[2px] bg-[var(--accent)]"
-                    transition={reduce ? { duration: 0 } : SLIDE}
-                    aria-hidden="true"
-                  />
-                ) : null}
-              </Link>
-            );
-          })}
-        </div>
-      </nav>
     </header>
   );
 }
@@ -114,15 +145,15 @@ function Telemetry({
 }) {
   const color =
     tone === "crit"
-      ? "text-[#f87b77]"
+      ? "text-[var(--critical)]"
       : tone === "warn"
-        ? "text-[#f7ab73]"
+        ? "text-[var(--high)]"
         : tone === "low"
-          ? "text-[#6dd1a3]"
+          ? "text-[var(--low)]"
           : "text-[var(--fg)]";
   return (
     <span className="inline-flex items-center gap-1 whitespace-nowrap">
-      <span className="text-[10px] tracking-[0.1em] text-[var(--fg-faint)]">
+      <span className="text-[10px] uppercase tracking-[0.08em] text-[var(--fg-faint)]">
         {label}
       </span>
       <span className={`font-semibold ${color}`}>

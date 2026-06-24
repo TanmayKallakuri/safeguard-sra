@@ -83,8 +83,8 @@ export function ActionsBar() {
         />
 
         {confirmReset ? (
-          <span className="inline-flex items-center gap-2 border border-[rgb(245_84_79_/_0.32)] bg-[rgb(245_84_79_/_0.08)] px-2.5 py-1 text-[11px]">
-            <span className="uppercase tracking-[0.06em] text-[#f87b77]">
+          <span className="inline-flex items-center gap-2 border border-[rgb(220_38_38_/_0.3)] bg-[rgb(220_38_38_/_0.08)] px-2.5 py-1 text-[11px]">
+            <span className="uppercase tracking-[0.06em] text-[#b91c1c]">
               Clear everything?
             </span>
             <button
@@ -94,7 +94,7 @@ export function ActionsBar() {
                 setConfirmReset(false);
                 setNotice({ kind: "ok", text: "Assessment cleared." });
               }}
-              className="bg-[var(--critical)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.06em] text-[#160404] hover:brightness-110 active:translate-y-px"
+              className="bg-[var(--critical)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.06em] text-white hover:brightness-90 active:translate-y-px"
             >
               Confirm
             </button>
@@ -110,7 +110,7 @@ export function ActionsBar() {
           <button
             type="button"
             onClick={() => setConfirmReset(true)}
-            className={`${btnBase} border-transparent text-[#f87b77] hover:bg-[rgb(245_84_79_/_0.08)]`}
+            className={`${btnBase} border-transparent text-[#b91c1c] hover:bg-[rgb(220_38_38_/_0.08)]`}
           >
             Start over
           </button>
@@ -121,7 +121,7 @@ export function ActionsBar() {
         <p
           role="status"
           className={`text-[11px] ${
-            notice.kind === "ok" ? "text-[#6dd1a3]" : "text-[#f87b77]"
+            notice.kind === "ok" ? "text-[var(--low)]" : "text-[#b91c1c]"
           }`}
         >
           {notice.text}

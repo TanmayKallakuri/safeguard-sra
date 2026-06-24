@@ -3,6 +3,7 @@ import { JetBrains_Mono, Instrument_Sans } from "next/font/google";
 import "./globals.css";
 import { AssessmentProvider } from "@/components/assessment-provider";
 import { MotionProvider } from "@/components/motion-provider";
+import { VantaFog } from "@/components/vanta-fog";
 import { SiteNav } from "@/components/site-nav";
 import { SiteFooter } from "@/components/site-footer";
 
@@ -39,8 +40,9 @@ export default function RootLayout({
       className={`${mono.variable} ${sans.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        {/* Faint scanline texture overlay (hidden in print). */}
-        <div className="scanlines" aria-hidden="true" />
+        {/* Animated Vanta FOG background (+ static fallback), fixed behind all
+            content; hidden in print. */}
+        <VantaFog />
         <MotionProvider>
           <AssessmentProvider>
             <SiteNav />

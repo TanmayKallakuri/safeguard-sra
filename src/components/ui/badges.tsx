@@ -3,7 +3,7 @@ import { statusLabel } from "@/lib/scoring";
 import type { SpecRequirement } from "@/lib/catalog";
 import { ratingStyle, statusStyle } from "@/components/ui/tokens";
 
-/** A sharp mono tag for a derived risk rating (square-ish, terminal). */
+/** A mono tag for a derived risk rating. */
 export function RatingBadge({
   rating,
   className = "",
@@ -14,10 +14,10 @@ export function RatingBadge({
   const c = ratingStyle(rating);
   return (
     <span
-      className={`inline-flex items-center gap-1 whitespace-nowrap rounded-[2px] border px-1.5 py-px text-[10px] font-semibold uppercase leading-[1.4] tracking-[0.1em] ${c.bg} ${c.text} ${c.border} ${className}`}
+      className={`inline-flex items-center gap-1 whitespace-nowrap rounded-md border px-1.5 py-0.5 text-[10px] font-semibold uppercase leading-[1.4] tracking-[0.08em] ${c.bg} ${c.text} ${c.border} ${className}`}
     >
       <span
-        className="h-1.5 w-1.5 rounded-[1px]"
+        className="h-1.5 w-1.5 rounded-full"
         style={{ backgroundColor: c.fill }}
         aria-hidden="true"
       />
@@ -35,7 +35,7 @@ export function RequirementBadge({ requirement }: { requirement: SpecRequirement
     return (
       <span
         title="Required — must be implemented"
-        className="inline-flex items-center rounded-[2px] border border-[rgb(34_211_238_/_0.4)] bg-[var(--accent-dim)] px-1 py-px text-[9px] font-semibold uppercase tracking-[0.1em] text-[var(--accent)]"
+        className="inline-flex items-center rounded border border-[var(--accent)]/35 bg-[var(--accent-dim)] px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-[0.08em] text-[var(--accent)]"
       >
         REQ
       </span>
@@ -44,7 +44,7 @@ export function RequirementBadge({ requirement }: { requirement: SpecRequirement
   return (
     <span
       title="Addressable — implement, adopt an equivalent, or document why not"
-      className="inline-flex items-center rounded-[2px] border border-[var(--rule-strong)] bg-transparent px-1 py-px text-[9px] font-semibold uppercase tracking-[0.1em] text-[var(--fg-faint)]"
+      className="inline-flex items-center rounded border border-[var(--rule-strong)] bg-transparent px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-[0.08em] text-[var(--fg-faint)]"
     >
       ADDR
     </span>
@@ -56,10 +56,10 @@ export function StatusBadge({ status }: { status: ImplementationStatus }) {
   const s = statusStyle(status);
   return (
     <span
-      className={`inline-flex items-center gap-1 whitespace-nowrap rounded-[2px] border px-1.5 py-px text-[10px] font-medium uppercase tracking-[0.08em] ${s.bg} ${s.text} ${s.border}`}
+      className={`inline-flex items-center gap-1 whitespace-nowrap rounded-md border px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-[0.06em] ${s.bg} ${s.text} ${s.border}`}
     >
       <span
-        className={`h-1.5 w-1.5 rounded-[1px] ${s.dot}`}
+        className={`h-1.5 w-1.5 rounded-full ${s.dot}`}
         aria-hidden="true"
       />
       {statusLabel(status)}

@@ -30,7 +30,7 @@ function CategoryRow({ summary }: { summary: CategorySummary }) {
   return (
     <Link
       href={`/assess?cat=${summary.category}`}
-      className="group grid grid-cols-[7.5rem_1fr] items-center gap-x-3 gap-y-1.5 bg-[var(--bg-panel)] px-3 py-2.5 transition-colors hover:bg-[var(--bg-elevated)] sm:grid-cols-[7.5rem_5rem_minmax(8rem,1fr)_4rem_minmax(6rem,9rem)]"
+      className="group grid grid-cols-[7rem_1fr] items-center gap-x-3 gap-y-1.5 rounded-lg px-3 py-2.5 transition-colors hover:bg-white/55 sm:grid-cols-[7rem_5rem_minmax(8rem,1fr)_4rem_minmax(6rem,9rem)]"
     >
       {/* Citation */}
       <span className="text-[11px] tabular-nums text-[var(--fg-muted)] group-hover:text-[var(--accent)]">
@@ -73,10 +73,10 @@ function CategoryRow({ summary }: { summary: CategorySummary }) {
   );
 }
 
-/** Dense, hairline-ruled category list (the dashboard's scannable register). */
+/** Hairline-divided category list (the dashboard's scannable register). */
 export function CategoryRows({ categories }: { categories: CategorySummary[] }) {
   return (
-    <div className="grid gap-px border border-[var(--rule)] bg-[var(--rule)]">
+    <div className="divide-y divide-[var(--rule)]">
       {categories.map((c) => (
         <CategoryRow key={c.category} summary={c} />
       ))}

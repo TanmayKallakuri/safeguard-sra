@@ -5,14 +5,14 @@ import { m, useReducedMotion } from "motion/react";
 import { useAssessment } from "@/components/assessment-provider";
 import { RatingBadge, RequirementBadge, StatusBadge } from "@/components/ui/badges";
 import { Rise, Stagger, CRISP } from "@/components/ui/motion";
-import { levelLabel } from "@/components/ui/tokens";
+import { levelLabel, ratingStyle } from "@/components/ui/tokens";
 import type { RiskRegisterEntry } from "@/lib/scoring";
 
 function RegisterSkeleton() {
   return (
     <div className="mx-auto max-w-6xl animate-pulse px-3 py-6 sm:px-5">
-      <div className="h-5 w-40 bg-white/5" />
-      <div className="mt-4 h-80 bg-white/[0.03]" />
+      <div className="h-5 w-40 rounded-md bg-white/40" />
+      <div className="mt-4 h-80 rounded-2xl bg-white/40" />
     </div>
   );
 }
@@ -118,10 +118,10 @@ export default function RegisterPage() {
           <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 border-y border-[var(--rule)] bg-[var(--bg-inset)] px-3 py-1.5 text-[11px]">
             <CountChip n={register.length} label={`open`} color="text-[var(--fg)]" />
             <span className="text-[var(--rule-strong)]">│</span>
-            <CountChip n={summary.riskCounts.critical} label="crit" color="text-[#f87b77]" />
-            <CountChip n={summary.riskCounts.high} label="high" color="text-[#f7ab73]" />
-            <CountChip n={summary.riskCounts.medium} label="med" color="text-[#edcf73]" />
-            <CountChip n={summary.riskCounts.low} label="low" color="text-[#6dd1a3]" />
+            <CountChip n={summary.riskCounts.critical} label="crit" color={ratingStyle("critical").text} />
+            <CountChip n={summary.riskCounts.high} label="high" color={ratingStyle("high").text} />
+            <CountChip n={summary.riskCounts.medium} label="med" color={ratingStyle("medium").text} />
+            <CountChip n={summary.riskCounts.low} label="low" color={ratingStyle("low").text} />
           </div>
 
           {/* Desktop table */}

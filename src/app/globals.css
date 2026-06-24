@@ -1,45 +1,69 @@
 @import "tailwindcss";
 
 /*
- * safeguard — "Threat console"
+ * safeguard — "Frosted glass over fog"
  *
- * A dense, monospace-forward security operations console (SOC/SIEM/TUI feel):
- * hairline-ruled panels, near-monochrome cool ink, tabular numerals, the only
- * saturated color is the risk signal. Dark-only by design; the single light
- * context is print (the /report path must stay clean black-on-white).
+ * A light, premium glassmorphic interface floating over an animated Vanta.js
+ * FOG background. Translucent frosted panels (legible — text never sits on the
+ * bare fog), dark-slate type, accents pulled from the fog (gold + blue), and
+ * solid risk-signal chips. The strong data design (risk matrix, register,
+ * metrics) is preserved, restyled light-on-glass.
+ *
+ * The single non-glass context is print: the /report path renders clean
+ * black-on-white with the fog hidden.
  */
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 
-  /* Near-monochrome cool ink base — layered, separated by rules not shadows. */
-  --bg-base: #080a0c; /* app base */
-  --bg-panel: #0e1216; /* panel surface */
-  --bg-elevated: #141a20; /* hover / elevated row */
-  --bg-inset: #060809; /* recessed wells (inputs, bar tracks, cells) */
+  /* Fog palette (mirrors Vanta FOG options) — used for the static fallback,
+     glows, and accents pulled from the background. */
+  --fog-base: #ffebeb;
+  --fog-gold: #ffc300;
+  --fog-red: #ff1f00;
+  --fog-blue: #2d00ff;
 
-  /* Hairline rules — 1px low-contrast lines are the structural language. */
-  --rule: rgba(148, 163, 184, 0.12); /* default divider */
-  --rule-strong: rgba(148, 163, 184, 0.22); /* hover / active edge */
-  --rule-faint: rgba(148, 163, 184, 0.07); /* internal grid lines */
+  /* Frosted glass surfaces — white at varying opacity, blurred. */
+  --glass: rgba(255, 255, 255, 0.78);
+  --glass-strong: rgba(255, 255, 255, 0.9);
+  --glass-elevated: rgba(255, 255, 255, 0.95); /* hover row */
+  --glass-inset: rgba(255, 255, 255, 0.55); /* wells, bar tracks */
 
-  /* Cool grey text, three tiers. */
-  --fg: #d4dde6; /* primary */
-  --fg-muted: #8b97a4; /* secondary / labels */
-  --fg-faint: #55626f; /* faint / axis / chrome */
+  /* Hairline light borders. */
+  --rule: rgba(30, 41, 59, 0.1);
+  --rule-strong: rgba(30, 41, 59, 0.18);
+  --rule-faint: rgba(30, 41, 59, 0.06);
 
-  /* The one restrained interactive accent — sharp signal cyan. */
-  --accent: #22d3ee;
-  --accent-dim: rgba(34, 211, 238, 0.12);
+  /* Dark-slate text, three tiers — high contrast on frosted white. */
+  --fg: #1e293b; /* slate-800, primary */
+  --fg-muted: #475569; /* slate-600, secondary */
+  --fg-faint: #64748b; /* slate-500, labels / faint */
 
-  /* Risk signal — the ONLY saturated color, reserved for ratings. */
-  --critical: #f5544f;
-  --high: #f5934a;
-  --medium: #e8c14a;
-  --low: #46c285;
+  /* Interactive accent — a refined bronze-gold pulled from the fog. Deepened so
+     it clears WCAG AA (4.5:1) as text on the frosted-white surfaces, and so
+     white labels on accent-filled buttons/segments also pass. */
+  --accent: #936b09; /* bronze-gold, 4.83:1 on white */
+  --accent-bright: #b8860b; /* lighter gold for decorative use */
+  --accent-dim: rgba(147, 107, 9, 0.14);
+  --accent-blue: #3a3acb; /* the fog blue, calmed for AA */
 
-  /* Back-compat aliases (older class strings may still reference these). */
-  --background: var(--bg-base);
-  --surface: var(--bg-panel);
+  /* Risk signal — solid, distinct chips on the light theme. */
+  --critical: #dc2626;
+  --high: #ea580c;
+  --medium: #ca8a04;
+  --low: #059669;
+
+  --shadow-glass: 0 1px 0 0 rgba(255, 255, 255, 0.6) inset,
+    0 8px 30px -12px rgba(30, 41, 59, 0.22);
+  --shadow-glass-lift: 0 1px 0 0 rgba(255, 255, 255, 0.7) inset,
+    0 14px 38px -14px rgba(30, 41, 59, 0.3);
+
+  /* Back-compat aliases for any class strings still referencing these. */
+  --bg-base: var(--fog-base);
+  --bg-panel: var(--glass);
+  --bg-elevated: var(--glass-elevated);
+  --bg-inset: var(--glass-inset);
+  --background: var(--fog-base);
+  --surface: var(--glass);
   --foreground: var(--fg);
   --muted: var(--fg-muted);
   --border: var(--rule);
@@ -47,10 +71,10 @@
 }
 
 @theme inline {
-  --color-background: var(--bg-base);
-  --color-surface: var(--bg-panel);
-  --color-elevated: var(--bg-elevated);
-  --color-inset: var(--bg-inset);
+  --color-background: var(--fog-base);
+  --color-surface: var(--glass);
+  --color-elevated: var(--glass-elevated);
+  --color-inset: var(--glass-inset);
   --color-foreground: var(--fg);
   --color-muted: var(--fg-muted);
   --color-faint: var(--fg-faint);
@@ -65,14 +89,14 @@
 }
 
 html {
-  background: var(--bg-base);
+  background: var(--fog-base);
 }
 
 body {
   position: relative;
-  background: var(--bg-base);
+  /* Fallback base color in case the fog has not yet painted. */
+  background: transparent;
   color: var(--fg);
-  /* Mono is the dominant voice; prose opts into --font-sans explicitly. */
   font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 13px;
   line-height: 1.45;
@@ -80,7 +104,6 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* All numerals align in columns, everywhere. */
 body,
 table,
 input,
@@ -88,71 +111,89 @@ button {
   font-variant-numeric: tabular-nums;
 }
 
-/* Faint scanline + dot texture — very low opacity, fixed, non-interactive. */
-.scanlines {
+/* ----- Vanta FOG background + static fallback --------------------------- */
+
+/* The fixed full-viewport host Vanta appends its canvas into. */
+.vanta-bg {
   position: fixed;
   inset: 0;
-  z-index: 0;
+  z-index: -1;
   pointer-events: none;
-  background-image:
-    repeating-linear-gradient(
-      0deg,
-      rgba(148, 163, 184, 0.025) 0px,
-      rgba(148, 163, 184, 0.025) 1px,
-      transparent 1px,
-      transparent 3px
-    ),
-    radial-gradient(rgba(148, 163, 184, 0.04) 1px, transparent 1px);
-  background-size: 100% 3px, 26px 26px;
-  opacity: 0.6;
-  mix-blend-mode: screen;
 }
 
-/* Keep app content above the texture. */
-body > *:not(.scanlines) {
+/* Static gradient approximating the fog (reduced-motion / no-WebGL). Always in
+   the DOM so SSR and client markup match; only visible when `.is-static`. */
+.fog-fallback {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0;
+  background-color: var(--fog-base);
+  background-image:
+    radial-gradient(40% 50% at 18% 22%, rgba(255, 195, 0, 0.55), transparent 70%),
+    radial-gradient(45% 55% at 82% 30%, rgba(255, 31, 0, 0.4), transparent 72%),
+    radial-gradient(55% 60% at 60% 88%, rgba(45, 0, 255, 0.32), transparent 75%),
+    radial-gradient(50% 50% at 30% 80%, rgba(255, 195, 0, 0.35), transparent 70%);
+  filter: blur(40px) saturate(115%);
+}
+.fog-fallback.is-static {
+  opacity: 1;
+}
+
+/* Keep app content above the backgrounds (which are at z-index:-1). */
+body > *:not(.vanta-bg):not(.fog-fallback) {
   position: relative;
   z-index: 1;
 }
 
-/* ----- Console primitives ----------------------------------------------- */
+/* ----- Glass primitives -------------------------------------------------- */
 
-/* A hairline-ruled panel. Sharp corners, 1px rule, surface — no shadow/glow. */
+/* A frosted glass panel: translucent white, blur, hairline, soft shadow. */
 .panel {
-  background: var(--bg-panel);
+  background: var(--glass);
   border: 1px solid var(--rule);
+  border-radius: 14px;
+  box-shadow: var(--shadow-glass);
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
 }
 
+/* A slightly more transparent inset surface (wells, tracks, cells). */
 .inset {
-  background: var(--bg-inset);
+  background: var(--glass-inset);
   border: 1px solid var(--rule);
+  border-radius: 10px;
 }
 
-/* Frosted top status bar. */
+/* Frosted header bar (stronger blur, higher opacity for nav legibility). */
 .frost {
-  background: color-mix(in oklab, var(--bg-base) 80%, transparent);
-  backdrop-filter: blur(8px) saturate(130%);
-  -webkit-backdrop-filter: blur(8px) saturate(130%);
+  background: var(--glass-strong);
+  border-bottom: 1px solid var(--rule);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  box-shadow: 0 4px 20px -16px rgba(30, 41, 59, 0.35);
 }
 
-/* Dense mono label: tiny, uppercase, letter-spaced. */
+/* Mono micro-label: tiny, uppercase, letter-spaced — precise data labels. */
 .label {
   font-family: var(--font-mono), ui-monospace, monospace;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   font-size: 10px;
   font-weight: 500;
   color: var(--fg-faint);
 }
 
-/* Terminal section header: ▸ LABEL ──────────── connecting rule. */
+/* Section header — light, airy. */
 .section-head {
   display: flex;
   align-items: center;
   gap: 0.6rem;
   font-family: var(--font-mono), ui-monospace, monospace;
   text-transform: uppercase;
-  letter-spacing: 0.14em;
-  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  font-size: 11px;
   font-weight: 600;
   color: var(--fg-muted);
 }
@@ -169,32 +210,16 @@ body > *:not(.scanlines) {
   font-variant-numeric: normal;
 }
 
-/* Blinking cursor block on the wordmark. */
+/* `.cursor` retained as a no-op so any stray reference is harmless. */
 .cursor {
-  display: inline-block;
-  width: 0.55em;
-  height: 1.05em;
-  margin-left: 1px;
-  vertical-align: text-bottom;
-  background: var(--accent);
-  animation: blink 1.1s steps(1) infinite;
-}
-@keyframes blink {
-  0%,
-  50% {
-    opacity: 1;
-  }
-  50.01%,
-  100% {
-    opacity: 0;
-  }
+  display: none;
 }
 
-/* Sharp accent focus ring — keyboard accessible. */
+/* Accent focus ring — keyboard accessible. */
 :focus-visible {
-  outline: 1.5px solid var(--accent);
-  outline-offset: 1px;
-  border-radius: 0;
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
 ::selection {
@@ -202,17 +227,18 @@ body > *:not(.scanlines) {
   color: var(--fg);
 }
 
-/* Thin terminal scrollbars. */
+/* Slim light scrollbars. */
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--rule-strong) transparent;
 }
 *::-webkit-scrollbar {
-  height: 7px;
-  width: 7px;
+  height: 8px;
+  width: 8px;
 }
 *::-webkit-scrollbar-thumb {
   background: var(--rule-strong);
+  border-radius: 999px;
 }
 
 /* Reduced motion safety net (motion components also branch in JS). */
@@ -225,20 +251,15 @@ body > *:not(.scanlines) {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-  .cursor {
-    animation: none !important;
-    opacity: 1 !important;
-  }
 }
 
-/* ----- Print: force clean black-on-white, hide chrome + texture ---------- */
+/* ----- Print: clean black-on-white, no fog ------------------------------ */
 @media print {
   :root {
-    color-scheme: light;
-    --bg-base: #ffffff;
-    --bg-panel: #ffffff;
-    --bg-elevated: #ffffff;
-    --bg-inset: #ffffff;
+    --glass: #ffffff;
+    --glass-strong: #ffffff;
+    --glass-elevated: #ffffff;
+    --glass-inset: #ffffff;
     --rule: #cccccc;
     --rule-strong: #999999;
     --rule-faint: #dddddd;
@@ -256,8 +277,9 @@ body > *:not(.scanlines) {
     display: none !important;
   }
 
-  .scanlines,
-  .cursor {
+  /* Fog must never print. */
+  .vanta-bg,
+  .fog-fallback {
     display: none !important;
   }
 
@@ -269,9 +291,14 @@ body > *:not(.scanlines) {
   }
 
   .panel,
-  .inset {
+  .inset,
+  .frost {
     background: #ffffff !important;
     border-color: #cccccc !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border-radius: 0 !important;
   }
 
   .print-container {

@@ -51,8 +51,10 @@ export function TickBar({
         return (
           <m.span
             key={i}
-            className="flex-1 rounded-[1px]"
-            style={{ backgroundColor: isFilled ? color : "var(--rule)" }}
+            className="flex-1 rounded-sm"
+            style={{
+              backgroundColor: isFilled ? color : "rgba(30,41,59,0.1)",
+            }}
             initial={{ opacity: isFilled ? 0.25 : 1, scaleY: isFilled ? 0.6 : 1 }}
             animate={{
               opacity: (inView || reduce) && isFilled ? 1 : isFilled ? 0.25 : 1,
@@ -111,7 +113,7 @@ export function StatusBreakdownBar({ counts }: { counts: StatusCounts }) {
   const total = SEGMENTS.reduce((sum, s) => sum + counts[s.key], 0);
   return (
     <div
-      className="inset flex h-1.5 w-full overflow-hidden"
+      className="flex h-1.5 w-full overflow-hidden rounded-full bg-[rgb(30_41_59_/_0.08)]"
       role="img"
       aria-label="Status breakdown"
     >

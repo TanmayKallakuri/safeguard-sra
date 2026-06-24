@@ -13,9 +13,9 @@ function cap(s: string) {
 function ReportSkeleton() {
   return (
     <div className="mx-auto max-w-4xl animate-pulse px-3 py-6 sm:px-5">
-      <div className="h-8 w-72 bg-white/5" />
-      <div className="mt-4 h-32 bg-white/[0.03]" />
-      <div className="mt-4 h-56 bg-white/[0.03]" />
+      <div className="h-8 w-72 rounded-md bg-white/40" />
+      <div className="mt-4 h-32 rounded-2xl bg-white/40" />
+      <div className="mt-4 h-56 rounded-2xl bg-white/40" />
     </div>
   );
 }
